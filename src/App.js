@@ -8,9 +8,10 @@ import Error from './pages/Error'
 import {Route, Switch} from 'react-router-dom';
 
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 function App() {
-    return < >
+    return <>
     <Navbar></Navbar>
         <Switch>
             <Route exact path="/" component={Home}></Route>
@@ -18,6 +19,7 @@ function App() {
             <Route exact path="/list/:element" component={Details}></Route>
             <Route component={Error}></Route>
         </Switch>
+        <Footer></Footer>
     </>;
 }
 

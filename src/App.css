@@ -515,3 +515,19 @@ h6 {
     max-width: 1170px;
   }
 }
+
+/* footer */
+.footer{
+  background-color: var(--mainBlack);
+  color: var(--mainWhite);
+  width: 100%;
+  margin-top: 1em;
+  height: 50px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  bottom: 0px;
+  left: 0px;
+  margin-top: 1em;
+  padding-top: 15px;
+}

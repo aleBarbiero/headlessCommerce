@@ -10,7 +10,7 @@ export default function Home() {
         <>
             <Banner>
                 <BannerContainer title="New arrivals" subtitle="Check our new products!">            
-                <Link to="/list" className="btn-primary">Discover</Link>
+                <Link to="/list" className="btn-primary">Explore</Link>
                 </BannerContainer>
             </Banner>
             <Services></Services>

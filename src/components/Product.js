@@ -13,7 +13,7 @@ export default function Product({product}) {
                     <h6>{price}€</h6>
                     <p>only online</p>
                 </div>
-                <Link to={`/rooms/${element}`} className="btn-primary room-link">Buy now</Link>
+                <Link to={`/list/${element}`} className="btn-primary room-link">Go to</Link>
             </div>
             <p className="room-info">{name}</p>
         </article>
