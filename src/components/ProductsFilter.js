@@ -45,7 +45,6 @@ export default function ProductsFilter({products}) {
                                 {types}
                             </select>
                         </div>
-                    {/*type*/}
                     {/*guests*/}
                     <div className="form-group">
                             <label htmlFor="capacity">Guests</label>
@@ -53,13 +52,28 @@ export default function ProductsFilter({products}) {
                                 {capacities}
                             </select>
                         </div>
-                    {/*guests*/}
                     {/*price*/}
                     <div className="form-group">
                         <label htmlFor="price">Max price: ${price}</label>
                         <input type="range" name="price" min={minPrice} max={maxPrice} id="price" value={price} onChange={handleChanges} className="form-control" step="50"></input>
                     </div>
-                    {/*price*/}
+                    {/*size*/}
+                    <div className="form-group">
+                        <label htmlFor="size">Size:</label>
+                        <input type="number" name="minSize" id="size" className="size-input" value={minSize} onChange={handleChanges}></input>
+                        <input type="number" name="maxSize" id="size" className="size-input" value={maxSize} onChange={handleChanges}></input>
+                    </div>
+                    {/*extra*/}
+                    <div className="form-group">
+                        <div className="single-extra">
+                            <input type="checkbox" name="breakfast" checked={breakfast} onChange={handleChanges}></input>
+                            <label htmlFor="breakfast">breakfast</label>
+                        </div>
+                        <div className="single-extra">
+                            <input type="checkbox" name="pets" checked={pets} onChange={handleChanges}></input>
+                            <label htmlFor="pets">pets</label>
+                        </div>
+                    </div>
                 </form>
         </section>
     );

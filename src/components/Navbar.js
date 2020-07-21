@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import logo from '../images/logo.png';
 import {BsChevronBarRight} from 'react-icons/bs';
+import {RiShoppingCartLine, RiUser3Line} from 'react-icons/ri'
 import {Link} from 'react-router-dom'
 
 export default class Navbar extends Component {
@@ -28,7 +29,17 @@ export default class Navbar extends Component {
                             <Link to="/">Home</Link>
                         </li>
                         <li>
-                            <Link to="/list">Prodotti</Link>
+                            <Link to="/list">Products</Link>
+                        </li>
+                        <li>
+                            <Link to="/cart">
+                                <RiShoppingCartLine className="nav-last"></RiShoppingCartLine>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/user">
+                                <RiUser3Line></RiUser3Line>
+                            </Link>
                         </li>
                     </ul>
                 </div>

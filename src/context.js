@@ -26,8 +26,9 @@ export default class ProductProvider extends Component {
     componentDidMount(){
         let products=this.formatData(items);
         let onesToWatch=products.filter(product => product.featured === true);
-        let maxPrice = Math.max(...products.map(item => item.price));
-        let maxSize = Math.max(...products.map(item => item.size));
+        let maxPrice=Math.max(...products.map(item => item.price));
+        let maxSize=Math.max(...products.map(item => item.size));
+        let price=maxPrice;
 
         this.setState({
             products,
@@ -35,7 +36,8 @@ export default class ProductProvider extends Component {
             onesToWatch,
             loading:false,
             maxPrice,
-            maxSize
+            maxSize,
+            price
         });
     }
 
@@ -51,13 +53,13 @@ export default class ProductProvider extends Component {
 
     getProduct = (element) => {
         let tempProduct=[...this.state.products];
-        const product = tempProduct.find(product => product.element === element);
+        const product=tempProduct.find(product => product.element === element);
         return product;
     }
 
     handleChanges = event => {
         const target=event.target;
-        const value=event.type === 'checkbox' ? target.checked : target.value;
+        const value=target.type === 'checkbox' ? target.checked : target.value;
         const name=event.target.name;
         this.setState({[name]:value},this.filterProducts)
     }
@@ -85,8 +87,19 @@ export default class ProductProvider extends Component {
         
         //price
         price=parseInt(price);
-        tempProducts=tempProducts.filter(product => product.price <= price);        
+        tempProducts=tempProducts.filter(product => product.price <= price);
         
+        //size
+        tempProducts=tempProducts.filter(product => product.size >= minSize && product.size <= maxSize)
+        
+        //breakfast
+        if(breakfast)
+            tempProducts=tempProducts.filter(product => product.breakfast === true);
+
+        //pets
+        if(pets)
+            tempProducts=tempProducts.filter(product => product.pets === true);
+
         this.setState({
             sortedProducts:tempProducts
         })
