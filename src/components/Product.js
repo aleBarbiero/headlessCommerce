@@ -11,11 +11,13 @@ export default function Product({product}) {
                 <img src={images[0] || defaultImg} alt={name}></img>
                 <div className="price-top">
                     <h6>{price}€</h6>
-                    <p>only online</p>
+                    <p>online</p>
                 </div>
-                <Link to={`/list/${element}`} className="btn-primary room-link">Go to</Link>
+                <Link to={`/list/${element}`} className="btn-primary room-link">Buy</Link>
             </div>
-            <p className="room-info">{name}</p>
+            <div className="room-info">
+                <p>{name}</p>
+            </div>
         </article>
     )
 }

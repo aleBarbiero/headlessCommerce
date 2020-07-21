@@ -11,21 +11,19 @@ export default class ProductProvider extends Component {
         onesToWatch: [],
         loading: true,
         type: "all",
-        capacity: 1,
+        compatibility: "all",
+        brand: "all",
         price: 0,
         minPrice: 0,
         maxPrice: 0,
-        minSize: 0,
-        maxSize: 0,
-        breakfast: false,
-        pets: false
     };
 
     //getData
 
     componentDidMount(){
         let products=this.formatData(items);
-        let onesToWatch=products.filter(product => product.featured === true);
+        let tempSorted=products.sort((a, b) => (a.price > b.price) ? 1 : -1)
+        let onesToWatch=[tempSorted[0], tempSorted[1], tempSorted[2]];
         let maxPrice=Math.max(...products.map(item => item.price));
         let maxSize=Math.max(...products.map(item => item.size));
         let price=maxPrice;
@@ -68,18 +66,15 @@ export default class ProductProvider extends Component {
         let{
             products,
             type,
-            capacity,
+            compatibility,
             price,
-            minSize,
-            maxSize,
-            breakfast,
-            pets
+            brand
         } = this.state;
         let tempProducts=[...products];
 
         //capacity
-        capacity=parseInt(capacity);
-        tempProducts=tempProducts.filter(product => product.capacity >= capacity)
+        if(compatibility!=='all')
+            tempProducts=tempProducts.filter(product => product.compatibility.includes(compatibility))
 
         //type
         if(type!=='all')
@@ -89,16 +84,9 @@ export default class ProductProvider extends Component {
         price=parseInt(price);
         tempProducts=tempProducts.filter(product => product.price <= price);
         
-        //size
-        tempProducts=tempProducts.filter(product => product.size >= minSize && product.size <= maxSize)
-        
-        //breakfast
-        if(breakfast)
-            tempProducts=tempProducts.filter(product => product.breakfast === true);
-
-        //pets
-        if(pets)
-            tempProducts=tempProducts.filter(product => product.pets === true);
+        //brand
+        if(brand!=='all')
+                tempProducts=tempProducts.filter(product => product.brand === brand)
 
         this.setState({
             sortedProducts:tempProducts

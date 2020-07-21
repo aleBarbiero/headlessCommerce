@@ -182,7 +182,7 @@ h6 {
 /* Banner */
 .banner {
   display: inline-block;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.65);
   color: var(--mainWhite);
   padding: 2rem 1rem;
   text-align: center;
@@ -308,6 +308,9 @@ h6 {
 .room {
   box-shadow: var(--lightShadow);
   transition: var(--mainTransition);
+  position: relative;
+  border: 1px solid var(--primaryColor);
+  border-bottom: 0px;
 }
 .room:hover {
   box-shadow: var(--darkShadow);
@@ -318,7 +321,6 @@ h6 {
 }
 .img-container img {
   width: 100%;
-  display: block;
   transition: var(--mainTransition);
 }
 .price-top {
@@ -361,10 +363,13 @@ h6 {
 .room-info {
   background: var(--darkGrey);
   text-transform: capitalize;
-  padding: 0.5rem 0;
+  padding: 0.5rem;
   text-align: center;
+  position: absolute;
+  bottom: 0;
   font-weight: 700;
   letter-spacing: var(--mainSpacing);
+  width: 100%;
 }
 
 /* elementDetails */
@@ -438,6 +443,19 @@ h6 {
   }
   .info {
     padding-left: 3rem;
+  }
+  .single-room-images{
+    margin-bottom: 1em;
+  }
+
+  .compat{
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    grid-column-gap: 2rem;
+    grid-row-gap: 1rem;
+    text-transform: capitalize;
+    letter-spacing: var(--mainSpacing);
   }
 }
 
@@ -523,13 +541,11 @@ h6 {
   background-color: var(--mainBlack);
   color: var(--mainWhite);
   width: 100%;
-  margin-top: 1em;
   height: 50px;
   width: 100%;
   text-align: center;
   position: relative;
   bottom: 0px;
   left: 0px;
-  margin-top: 1em;
   padding-top: 15px;
 }

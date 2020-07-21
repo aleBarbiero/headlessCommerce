@@ -4,6 +4,7 @@ import BannerContainter from '../components/BannerContainer'
 import {Link} from 'react-router-dom'
 import {ProductContext} from '../context'
 import StyledBanner from '../components/StyledBanner'
+import Error from './Error'
 
 export default class Details extends Component {
 
@@ -25,26 +26,22 @@ export default class Details extends Component {
         const {getProduct} = this.context;
         const product = getProduct(this.state.element);
         if(!product){
-            return <div className="error">
-                <h3>404 product not found!</h3>
-                <Link to="/list" className="btn-primary">back to list</Link>
-            </div>
+            return <Error></Error>
         }
         const {
             name,
             description,
-            capacity,
-            size,
+            brand,
             price,
+            compatibility,
             extras,
-            breakfast,
-            pets,
-            images} = product;
+            images
+        } = product;
 
         return (
             <>
                 <StyledBanner img={images[0] || this.state.defaultImg}>
-                    <BannerContainter title={`${name}`}>
+                    <BannerContainter title={`${brand} - ${name}`}>
                         <Link to="/list" className="btn-primary">
                             Back to list
                         </Link>
@@ -59,12 +56,13 @@ export default class Details extends Component {
                         <article className="info">
                             <h3>Details</h3>
                             <h6>Price: {price}€</h6>
-                            <h6>Size: {size}m<sup>2</sup></h6>
-                            <h6>Max capacity: {capacity}
-                                { capacity > 1 ? ` people` : ` person` }
-                            </h6>
-                            <h6>{pets ? "Pets allowed" : "No pets allowed"}</h6>
-                            <h6>{breakfast && "Breakfast included"}</h6>
+                            <h6>Brand: {brand}</h6>
+                            <h6>Compatibility:</h6>
+                            <ul className="compat">
+                                {compatibility.map((item, index) => {
+                                    return <li key={index}>- {item}</li>
+                                })}
+                            </ul>
                         </article>
                     </div>
                     <section className="room-extras">
