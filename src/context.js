@@ -39,6 +39,18 @@ export default class ProductProvider extends Component {
         });
     }
 
+    sort = event => {
+        let {
+            sortedProducts
+        } = this.state;
+        const value=event.target.value;
+        if(value==="alpha")
+            sortedProducts=sortedProducts.sort((a, b) => (a.name > b.name) ? 1 : -1);
+        else if(value==="price")
+            sortedProducts=sortedProducts.sort((a, b) => (a.price > b.price) ? 1 : -1);
+        this.setState({sortedProducts:sortedProducts});
+    }
+
     formatData(items){
         let tempItems=items.map(item =>{
             let id=item.sys.id
@@ -53,6 +65,13 @@ export default class ProductProvider extends Component {
         let tempProduct=[...this.state.products];
         const product=tempProduct.find(product => product.element === element);
         return product;
+    }
+
+    resetChanges = event => {
+        let{
+            products
+        } = this.state;
+        this.setState({sortedProducts:products})
     }
 
     handleChanges = event => {
@@ -95,7 +114,7 @@ export default class ProductProvider extends Component {
 
     render() {
         return (
-            <ProductContext.Provider value={{...this.state,getProduct: this.getProduct,handleChanges: this.handleChanges}}>
+            <ProductContext.Provider value={{...this.state,getProduct: this.getProduct,handleChanges: this.handleChanges,resetChanges:this.resetChanges,sort:this.sort}}>
                 {this.props.children}
             </ProductContext.Provider>
         );

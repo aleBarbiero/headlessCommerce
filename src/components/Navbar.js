@@ -17,6 +17,11 @@ export default class Navbar extends Component {
             <nav className="navbar">
                 <div className="nav-center">
                     <div className="nav-header">
+                        <button type="button" className="nav-btn">
+                            <Link to="/cart">
+                                <RiShoppingCartLine className="nav-icon"></RiShoppingCartLine>
+                            </Link>
+                        </button>
                         <Link to="/">
                             <img src={logo} alt="PhotoStudio" className="logo-img"/>
                         </Link>
@@ -32,13 +37,13 @@ export default class Navbar extends Component {
                             <Link to="/list">Products</Link>
                         </li>
                         <li>
-                            <Link to="/cart">
-                                <RiShoppingCartLine className="nav-last"></RiShoppingCartLine>
+                            <Link to="/user">
+                                <RiUser3Line></RiUser3Line>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/user">
-                                <RiUser3Line></RiUser3Line>
+                            <Link to="/cart">
+                                <RiShoppingCartLine className="nav-last"></RiShoppingCartLine>
                             </Link>
                         </li>
                     </ul>

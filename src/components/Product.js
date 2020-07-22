@@ -11,9 +11,9 @@ export default function Product({product}) {
                 <img src={images[0] || defaultImg} alt={name}></img>
                 <div className="price-top">
                     <h6>{price}€</h6>
-                    <p>online</p>
+                    <p>tax included</p>
                 </div>
-                <Link to={`/list/${element}`} className="btn-primary room-link">Buy</Link>
+                <Link to={`/list/${element}`} className="btn-primary room-link">view more</Link>
             </div>
             <div className="room-info">
                 <p>{name}</p>

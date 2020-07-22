@@ -373,6 +373,16 @@ h6 {
 }
 
 /* elementDetails */
+.compat{
+  letter-spacing: var(--mainSpacing);
+  text-transform: capitalize;
+  list-style-type: none;
+}
+
+.desc .btn-primary{
+  margin-bottom: 3rem;
+}
+
 .single-room {
   padding: 5rem 0 0 0;
 }
@@ -484,7 +494,7 @@ h6 {
   }
 }
 
-/* Fitlers */
+/* Filters */
 .filter-container {
   padding: 5rem 0;
 }
@@ -548,4 +558,58 @@ h6 {
   bottom: 0px;
   left: 0px;
   padding-top: 15px;
+}
+
+/*search*/
+.search, .search-btn {
+	color: var(--mainWhite);
+	font-size: 1.8rem;
+}
+
+input[type="search"] {
+  border: 1px solid var(--primaryColor);
+  text-align: center;
+	width: 100%;
+	background: none;
+  position: relative;
+  color: var(--mainWhite);
+}
+
+input[type="search"]:hover::placeholder{
+  font-size: 0px;
+}
+
+input[type="search"]::placeholder{
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+}
+
+.search-btn {
+  margin-top: 1em;
+  display: inline-block;
+  text-decoration: none;
+  letter-spacing: var(--mainSpacing);
+  color: var(--mainBlack);
+  background: var(--primaryColor);
+  padding: 0.4rem 0.9rem;
+  border: 3px solid var(--primaryColor);
+  transition: var(--mainTransition);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.search-btn:hover{
+  background: transparent;
+  color: var(--primaryColor);
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance:none;
+}
+
+.container{
+  margin: 1rem;
 }

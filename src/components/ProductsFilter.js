@@ -16,6 +16,8 @@ export default function ProductsFilter({products}) {
     const context=useContext(ProductContext);
     const {
         handleChanges,
+        resetFilters,
+        sort,
         type,
         brand,
         price,
@@ -65,6 +67,22 @@ export default function ProductsFilter({products}) {
                     <div className="form-group">
                         <label htmlFor="price">Max price: ${price}</label>
                         <input type="range" name="price" min={minPrice} max={maxPrice} id="price" value={price} onChange={handleChanges} className="form-control" step="50"></input>
+                    </div>
+                    {/*sort*/}
+                    <div className="form-group">
+                        <label htmlFor="sort">Sort by:</label>
+                        <label className="container">Price
+                            <input type="radio" value="price" defaultChecked="true" name="radio" onChange={sort}/>
+                        </label>
+                        <label className="container">Alphabetically
+                            <input type="radio" value="alpha" name="radio" onChange={sort}/>
+                        </label>
+                    </div>
+                    {/*reset*/}
+                    <div className="form-group">
+                        <button className="btn-primary" onClick={resetFilters}>
+                            Reset filters
+                        </button>
                     </div>
                 </form>
         </section>

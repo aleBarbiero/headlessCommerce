@@ -50,6 +50,9 @@ export default class Details extends Component {
                 <section className="single-room">
                     <div className="single-room-info">
                         <article className="desc">
+                            <button className="btn-primary">
+                                Add to cart
+                            </button>
                             <h3>Description</h3>
                             <p>{description}</p>
                         </article>
