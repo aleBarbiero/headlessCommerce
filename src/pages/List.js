@@ -8,7 +8,7 @@ import ProductsContainer from '../components/ProductsContainer'
 export default function List() {
     return (
         <>
-        <Banner hero="roomsHero">
+        <Banner hero="productsBanner">
             <BannerContainer title="Products">
                 <Link to="/" className="btn-primary">
                     Return home

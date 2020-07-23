@@ -166,16 +166,16 @@ h6 {
 }
 
 /* bannerImage */
-.defaultHero,
-.roomsHero {
+.defaultBanner,
+.productsBanner {
   min-height: calc(100vh - 66px);
-  background: url("./images/defaultBcg.jpeg") center/cover no-repeat;
+  background: url("../images/defaultBcg.jpeg") center/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.roomsHero {
-  background-image: url("./images/defaultBcg2.jpeg");
+.productsBanner {
+  background-image: url("../images/defaultBcg2.jpeg");
   min-height: 60vh;
 }
 
@@ -237,7 +237,7 @@ h6 {
   background: var(--primaryColor);
 }
 
-/* BannerIcons */
+/* services */
 .services {
   padding: 5rem 0;
 }
@@ -279,11 +279,11 @@ h6 {
   }
 }
 
-/* featuredElements */
-.featured-rooms {
+/* toWatch */
+.products-towatch {
   padding: 5rem 0;
 }
-.featured-rooms-center {
+.products-towatch-center {
   width: 80vw;
   margin: 0 auto;
   display: grid;
@@ -292,27 +292,27 @@ h6 {
   grid-column-gap: 40px;
 }
 @media screen and (min-width: 776px) {
-  .featured-rooms-center {
+  .products-towatch-center {
     width: 90vw;
     grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
   }
 }
 @media screen and (min-width: 992px) {
-  .featured-rooms-center {
+  .products-towatch-center {
     width: 95vw;
     max-width: 1170px;
   }
 }
 
 /* elementsList */
-.room {
+.product {
   box-shadow: var(--lightShadow);
   transition: var(--mainTransition);
   position: relative;
   border: 1px solid var(--primaryColor);
   border-bottom: 0px;
 }
-.room:hover {
+.product:hover {
   box-shadow: var(--darkShadow);
 }
 
@@ -341,7 +341,7 @@ h6 {
   font-weight: 300;
   letter-spacing: var(--mainSpacing);
 }
-.room-link {
+.product-link {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -357,10 +357,10 @@ h6 {
 .img-container:hover .price-top {
   opacity: 0;
 }
-.img-container:hover .room-link {
+.img-container:hover .product-link {
   transform: translate(-50%, -50%) scale(1);
 }
-.room-info {
+.product-info {
   background: var(--darkGrey);
   text-transform: capitalize;
   padding: 0.5rem;
@@ -383,10 +383,10 @@ h6 {
   margin-bottom: 3rem;
 }
 
-.single-room {
+.single-product {
   padding: 5rem 0 0 0;
 }
-.single-room-images {
+.single-product-images {
   width: 80vw;
   margin: 0 auto;
   display: grid;
@@ -394,11 +394,11 @@ h6 {
   grid-row-gap: 2rem;
   grid-column-gap: 50px;
 }
-.single-room-images img {
+.single-product-images img {
   width: 100%;
   display: block;
 }
-.single-room-info {
+.single-product-info {
   width: 80vw;
   display: grid;
   grid-template-columns: 1fr;
@@ -424,11 +424,11 @@ h6 {
 .info h6 {
   font-weight: 300;
 }
-.room-extras {
+.product-extras {
   width: 80vw;
   margin: 0 auto 3rem auto;
 }
-.room-extras h6 {
+.product-extras h6 {
   text-transform: capitalize;
   letter-spacing: var(--mainSpacing);
 }
@@ -440,13 +440,13 @@ h6 {
   grid-row-gap: 1rem;
 }
 @media screen and (min-width: 992px) {
-  .single-room-images,
-  .single-room-info,
-  .room-extras {
+  .single-product-images,
+  .single-product-info,
+  .product-extras {
     width: 95vw;
     max-width: 1170px;
   }
-  .single-room-info {
+  .single-product-info {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-column-gap: 2rem;
@@ -454,7 +454,7 @@ h6 {
   .info {
     padding-left: 3rem;
   }
-  .single-room-images{
+  .single-product-images{
     margin-bottom: 1em;
   }
 
@@ -470,10 +470,10 @@ h6 {
 }
 
 /* elementList */
-.roomslist {
+.productslist {
   padding: 5rem 0;
 }
-.roomslist-center {
+.productslist-center {
   width: 80vw;
   margin: 0 auto;
   display: grid;
@@ -483,12 +483,12 @@ h6 {
 }
 
 @media screen and (min-width: 776px) {
-  .roomslist-center {
+  .productslist-center {
     width: 90vw;
   }
 }
 @media screen and (min-width: 992px) {
-  .roomslist-center {
+  .productslist-center {
     width: 95vw;
     max-width: 1170px;
   }
@@ -567,7 +567,7 @@ h6 {
 }
 
 .footer p{
-	color:white;
+	color:var(--mainWhite);
 	font-size: 1em;
 	margin-left: auto;
 	margin-right: auto;

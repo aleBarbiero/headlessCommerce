@@ -47,8 +47,8 @@ export default class Details extends Component {
                         </Link>
                     </BannerContainter>
                 </StyledBanner>
-                <section className="single-room">
-                    <div className="single-room-info">
+                <section className="single-product">
+                    <div className="single-product-info">
                         <article className="desc">
                             <button className="btn-primary">
                                 Add to cart
@@ -68,7 +68,7 @@ export default class Details extends Component {
                             </ul>
                         </article>
                     </div>
-                    <section className="room-extras">
+                    <section className="product-extras">
                         <h6>More</h6>
                         <ul className="extras">
                             {extras.map((item, index) => {
@@ -76,7 +76,7 @@ export default class Details extends Component {
                             })}
                         </ul>
                     </section>
-                    <div className="single-room-images">
+                    <div className="single-product-images">
                         {images.map((item,index) => {
                             if(index!==0)
                                 return <img key={index} src={item} alt={name}></img>

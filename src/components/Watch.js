@@ -16,9 +16,9 @@ export default class Watch extends Component {
         })
 
         return (
-            <section className="featured-rooms">
+            <section className="products-towatch">
                 <Title title="Lowest price"></Title>
-                <div className="featured-rooms-center">
+                <div className="products-towatch-center">
                     {loading ? <Loading></Loading> : toWatch}
                 </div>
             </section>

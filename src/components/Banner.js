@@ -9,5 +9,5 @@ export default function Banner({children,hero}) {
 }
 
 Banner.defaultProps={
-    hero:"defaultHero"
+    hero:"defaultBanner"
 };

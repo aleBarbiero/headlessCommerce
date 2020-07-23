@@ -19,7 +19,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "sass": "node-sass sass/ -o build/css/",
+    "dev": "rerun-script"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -35,5 +37,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "watches": {
+    "sass": "sass/**"
+  },
+  "devDependencies": {
+    "node-sass": "^4.14.1",
+    "rerun-script": "^0.6.0"
   }
 }
