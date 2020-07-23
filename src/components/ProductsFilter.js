@@ -12,6 +12,14 @@ const getUniqueBrand=(item) => {
     return [...new Set(item.map(item => item["brand"]))].sort()
 }
 
+const getUniqueComp=(item) => {
+    let toReturn=new Set();
+    (item.map(item => {
+        item["compatibility"].map(item => toReturn.add(item));
+    }));
+    return toReturn;
+}
+
 export default function ProductsFilter({products}) {
     const context=useContext(ProductContext);
     const {
@@ -38,6 +46,12 @@ export default function ProductsFilter({products}) {
         return <option value={item} key={index}>{item.charAt(0).toUpperCase() + item.slice(1)}</option>
     })
 
+    let comp=getUniqueComp(products);
+    comp=["all",...comp];
+    comp=comp.map((item,index) => {
+        return <option value={item} key={index}>{item.charAt(0).toUpperCase() + item.slice(1)}</option>
+    })
+
     return(
         <section className="filter-container">
             <Title title="search products"></Title>
@@ -60,7 +74,7 @@ export default function ProductsFilter({products}) {
                     <div className="form-group">
                         <label htmlFor="compability">Compatibility</label>
                         <select name="compatibility" id="compatibility" value={compatibility} className="form-control" onChange={handleChanges}>
-                            {brands}
+                            {comp}
                         </select>
                     </div>
                     {/*price*/}
