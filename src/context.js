@@ -22,8 +22,9 @@ export default class ProductProvider extends Component {
 
     componentDidMount(){
         let products=this.formatData(items);
-        let tempSorted=products.sort((a, b) => (a.price > b.price) ? 1 : -1)
+        let tempSorted=products.sort((a, b) => (a.price > b.price) ? 1 : -1);
         let onesToWatch=[tempSorted[0], tempSorted[1], tempSorted[2]];
+        let minPrice=Math.min(...products.map(item => item.price));
         let maxPrice=Math.max(...products.map(item => item.price));
         let maxSize=Math.max(...products.map(item => item.size));
         let price=maxPrice;
@@ -34,6 +35,7 @@ export default class ProductProvider extends Component {
             onesToWatch,
             loading:false,
             maxPrice,
+            minPrice,
             maxSize,
             price
         });

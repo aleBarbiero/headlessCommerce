@@ -551,13 +551,52 @@ h6 {
   background-color: var(--mainBlack);
   color: var(--mainWhite);
   width: 100%;
-  height: 50px;
+  height: auto;
   width: 100%;
   text-align: center;
   position: relative;
   bottom: 0px;
   left: 0px;
   padding-top: 15px;
+  padding-bottom: 10px;
+  
+}
+
+.container{
+  margin: 1rem;
+}
+
+.footer p{
+	color:white;
+	font-size: 1em;
+	margin-left: auto;
+	margin-right: auto;
+	display: flex;
+	justify-content: center;
+}
+
+#socialContainer{
+	position: relative;
+	display: flex; 
+	justify-content: center;
+}
+
+.socialButton{
+	position: relative;
+	margin: 1em 0.5em;
+	font-size: 1.5em;
+}
+
+.socialButton .fa{
+	text-decoration: none;
+	color:var(--mainWhite);
+	font-size: 1.2em;
+	-webkit-transition-duration: 0.2s;
+	transition-duration: 0.2s;
+}
+
+.socialButton .fa:hover{
+  color:var(--primaryColor);
 }
 
 /*search*/
@@ -608,8 +647,4 @@ input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance:none;
-}
-
-.container{
-  margin: 1rem;
 }
