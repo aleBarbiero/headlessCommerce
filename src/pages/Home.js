@@ -4,7 +4,6 @@ import BannerContainer from '../components/BannerContainer'
 import Services from '../components/Services'
 import Watch from '../components/Watch'
 import {Link} from 'react-router-dom'
-import Search from '../components/Search'
 
 export default function Home() {
     return (
