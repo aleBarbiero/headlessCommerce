@@ -7,22 +7,22 @@ function Footer() {
         <>
         <div className="footer">
         <div id="socialContainer">
-            <div class="socialButton">
+            <div className="socialButton">
                 <Link to="https://www.facebook.com">
                     <TiSocialFacebook className="fa"></TiSocialFacebook>
                 </Link>
             </div>
-            <div class="socialButton">
+            <div className="socialButton">
                 <Link to="https://www.twitter.com">
                     <TiSocialTwitter  className="fa"></TiSocialTwitter>
                 </Link>
             </div>
-            <div class="socialButton">
+            <div className="socialButton">
                 <Link to="https://www.instagram.com">
                     <TiSocialInstagram  className="fa"></TiSocialInstagram>
                 </Link>
             </div>
-            <div class="socialButton">
+            <div className="socialButton">
                 <Link to="https://www.pinterest.it">
                     <TiSocialPinterest  className="fa"></TiSocialPinterest>
                 </Link>

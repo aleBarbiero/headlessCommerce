@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
-import items from './data'
+import React, { Component } from 'react';
+//import items from './data';
+import Client from './dataAPI';
 
 const ProductContext= React.createContext();
 
@@ -19,27 +20,38 @@ export default class ProductProvider extends Component {
     };
 
     //getData
+    getData = async() =>{
+        try{
+            let response = await Client.getEntries({
+                content_type: "photoStudio",
+                order: "fields.price"
+            });
+            let products=this.formatData(response.items);
+            let tempSorted=products.sort((a, b) => (a.price > b.price) ? 1 : -1);
+            let onesToWatch=[tempSorted[0], tempSorted[1], tempSorted[2]];
+            let minPrice=Math.min(...products.map(item => item.price));
+            let maxPrice=Math.max(...products.map(item => item.price));
+            let maxSize=Math.max(...products.map(item => item.size));
+            let price=maxPrice;
+
+            this.setState({
+                products,
+                sortedProducts:products,
+                onesToWatch,
+                loading:false,
+                maxPrice,
+                minPrice,
+                maxSize,
+                price
+            });
+        }catch(error){
+            console.log(error);
+        }//try_catch
+    }//getData
 
     componentDidMount(){
-        let products=this.formatData(items);
-        let tempSorted=products.sort((a, b) => (a.price > b.price) ? 1 : -1);
-        let onesToWatch=[tempSorted[0], tempSorted[1], tempSorted[2]];
-        let minPrice=Math.min(...products.map(item => item.price));
-        let maxPrice=Math.max(...products.map(item => item.price));
-        let maxSize=Math.max(...products.map(item => item.size));
-        let price=maxPrice;
-
-        this.setState({
-            products,
-            sortedProducts:products,
-            onesToWatch,
-            loading:false,
-            maxPrice,
-            minPrice,
-            maxSize,
-            price
-        });
-    }
+        this.getData();
+    }//componentDidMount
 
     sort = event => {
         let {
@@ -51,7 +63,7 @@ export default class ProductProvider extends Component {
         else if(value==="price")
             sortedProducts=sortedProducts.sort((a, b) => (a.price > b.price) ? 1 : -1);
         this.setState({sortedProducts:sortedProducts});
-    }
+    }//sort
 
     formatData(items){
         let tempItems=items.map(item =>{
@@ -61,27 +73,27 @@ export default class ProductProvider extends Component {
             return product;
         });
         return tempItems;
-    }
+    }//formatData
 
     getProduct = (element) => {
         let tempProduct=[...this.state.products];
         const product=tempProduct.find(product => product.element === element);
         return product;
-    }
+    }//getProduct
 
     resetChanges = event => {
         let{
             products
         } = this.state;
         this.setState({sortedProducts:products})
-    }
+    }//resetChanges
 
     handleChanges = event => {
         const target=event.target;
         const value=target.type === 'checkbox' ? target.checked : target.value;
         const name=event.target.name;
         this.setState({[name]:value},this.filterProducts)
-    }
+    }//handleChanges
 
     filterProducts = () => {
         let{
@@ -112,7 +124,7 @@ export default class ProductProvider extends Component {
         this.setState({
             sortedProducts:tempProducts
         })
-    }
+    }//filterProducts
 
     render() {
         return (
@@ -120,8 +132,8 @@ export default class ProductProvider extends Component {
                 {this.props.children}
             </ProductContext.Provider>
         );
-    }
-}
+    }//render
+}//ProductProvider
 
 const ProductConsumer = ProductContext.Consumer;
 
@@ -132,6 +144,6 @@ export function withProductConsumer(Component){
                 {value => <Component {...props} context={value}/>}
             </ProductConsumer>
         )}
-}
+}//withProductConsumer
 
 export{ProductProvider,ProductConsumer,ProductContext}
