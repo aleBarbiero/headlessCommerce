@@ -13,7 +13,7 @@ const config = {
     }
 }
 
-
+export default({})
 
 /*------------------
 
