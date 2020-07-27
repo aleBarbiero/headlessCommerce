@@ -1,4 +1,23 @@
-import * as CommerceSdk from "commerce-sdk";
+var express = require('express')
+var cors = require('cors')
+var app = express()
+const fetch = require('node-fetch');
+
+app.use(cors())
+app.get('/products/:id', function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+
+fetch(/*'https://ghibliapi.herokuapp.com/films'*/
+    'https://nhmagqf3.api.commercecloud.salesforce.com/product/shopper-products/v1/organizations/f_ecom_bcld_s02/products')
+    .then(res => res.json())
+    .then((data) => {
+        console.log(data);
+    }).catch( e => {
+        console.log(e);
+    })
+
+/*import * as CommerceSdk from "commerce-sdk";
 
 const {ClientConfig,helpers,Search} = CommerceSdk;
 
@@ -15,7 +34,7 @@ const config = {
 
 export default({})
 
-/*------------------
+------------------
 
 helpers.getShopperToken(config, {type: "guest"}).then(async (token) => {
     try{
