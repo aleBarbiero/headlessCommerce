@@ -24,18 +24,21 @@ export default class Details extends Component {
 
     render() {
         const {getProduct} = this.context;
+        const {addToCart} = this.context;
         const product = getProduct(this.state.element);
         if(!product){
             return <Error></Error>
         }
         const {
             name,
+            element,
             description,
             brand,
             price,
             compatibility,
             extras,
-            images
+            images,
+            inCart
         } = product;
 
         return (
@@ -50,8 +53,8 @@ export default class Details extends Component {
                 <section className="single-product">
                     <div className="single-product-info">
                         <article className="desc">
-                            <button className="btn-primary">
-                                Add to cart
+                            <button className="btn-primary" disabled={inCart?true:false} onClick={() => {addToCart(element)}}>
+                                {inCart ? "in cart" : "add to cart"}
                             </button>
                             <h3>Description</h3>
                             <p>{description}</p>

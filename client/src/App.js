@@ -3,6 +3,7 @@ import './style/style.css';
 import Home from './pages/Home'
 import List from './pages/List'
 import Details from './pages/Details'
+import Cart from './components/Cart'
 import Error from './pages/Error'
 import {Route, Switch} from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -16,6 +17,7 @@ class App extends Component {
                 <Route exact path="/" component={Home}></Route>
                 <Route exact path="/list/" component={List}></Route>
                 <Route exact path="/list/:element" component={Details}></Route>
+                <Route exact path="/cart" component={Cart}></Route>
                 <Route component={Error}></Route>
             </Switch>
             <Footer></Footer>

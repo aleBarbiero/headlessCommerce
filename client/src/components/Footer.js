@@ -6,30 +6,30 @@ function Footer() {
     return (
         <>
         <div className="footer">
-        <div id="socialContainer">
-            <div className="socialButton">
-                <Link to="https://www.facebook.com">
-                    <TiSocialFacebook className="fa"></TiSocialFacebook>
-                </Link>
+            <div id="socialContainer">
+                <div className="socialButton">
+                    <Link to="https://www.facebook.com">
+                        <TiSocialFacebook className="fa"></TiSocialFacebook>
+                    </Link>
+                </div>
+                <div className="socialButton">
+                    <Link to="https://www.twitter.com">
+                        <TiSocialTwitter  className="fa"></TiSocialTwitter>
+                    </Link>
+                </div>
+                <div className="socialButton">
+                    <Link to="https://www.instagram.com">
+                        <TiSocialInstagram  className="fa"></TiSocialInstagram>
+                    </Link>
+                </div>
+                <div className="socialButton">
+                    <Link to="https://www.pinterest.it">
+                        <TiSocialPinterest  className="fa"></TiSocialPinterest>
+                    </Link>
+                </div>
             </div>
-            <div className="socialButton">
-                <Link to="https://www.twitter.com">
-                    <TiSocialTwitter  className="fa"></TiSocialTwitter>
-                </Link>
+                <p>&copy; Alessio Barbiero | #thisIsDiana</p>
             </div>
-            <div className="socialButton">
-                <Link to="https://www.instagram.com">
-                    <TiSocialInstagram  className="fa"></TiSocialInstagram>
-                </Link>
-            </div>
-            <div className="socialButton">
-                <Link to="https://www.pinterest.it">
-                    <TiSocialPinterest  className="fa"></TiSocialPinterest>
-                </Link>
-            </div>
-        </div>
-            <p>&copy; Alessio Barbiero | #thisIsDiana</p>
-        </div>
         </>
     )
 }

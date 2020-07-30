@@ -85,10 +85,10 @@ export default function ProductsFilter({products}) {
                     {/*sort*/}
                     <div className="form-group">
                         <label htmlFor="sort">Sort by:</label>
-                        <label className="container">Price
+                        <label>Price
                             <input type="radio" value="price" defaultChecked="true" name="radio" onChange={sort}/>
                         </label>
-                        <label className="container">Alphabetically
+                        <label>Alphabetically
                             <input type="radio" value="alpha" name="radio" onChange={sort}/>
                         </label>
                     </div>
