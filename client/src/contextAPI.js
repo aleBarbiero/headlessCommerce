@@ -5,31 +5,41 @@ const ProductContext= React.createContext();
 export default class ProductProvider extends Component {
 
     state={
-        apiToWatch: "",
-        apiCat: "",
-        toWatch,
-        categories,
-        products
+        categories: [],
+        products: []
     };
 
-    //getData
-    getData = async() =>{
-        await fetch("http://localhost:9000/searchAPI?param=shoes")
+    setUp = async() => {
+        let categories=this.getCategories();
+    }
+
+    //getCategories
+    getCategories = async() => {
+        let categories = await fetch("http://localhost:9000/categoriesAPI")
         .then(res => res.json())
-        .then(res => this.setState({apiToWatch: res}))
         .catch(err => err);
-    }//getData
+        let tempCat = categories["data"].map(item => {
+            let id=item.id;
+            let name=item.name.default;
+            let category={id,name};
+            return category;
+        })
+        return tempCat;
+    }//getCategories
+
+    //getProducts
+    getProducts = async() => {
+        let products = categories.map(item => {
+            let catProducts = await fetch(`http://localhost:9000/categoryProductsAPI?id=${item.id}`)
+                                    .then(res => res.json())
+                                    .catch(err => err);
+            console.log(catProducts);
+        })
+    }
 
     componentDidMount(){
-        this.getData();
-    }//componentDidMount
-
-    getProduct = (element) => {
-        let tempProduct=[...this.state.products];
-        const product=tempProduct.find(product => product.element === element);
-        return product;
-    }//getProduct
-
+        this.setUp();
+    }
     render() {
         return (
             <ProductContext.Provider value={{...this.state,getProduct: this.getProduct}}>

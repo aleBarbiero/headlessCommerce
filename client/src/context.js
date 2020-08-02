@@ -48,7 +48,28 @@ export default class ProductProvider extends Component {
         }catch(error){
             console.log(error);
         }//try_catch
+       //this.test();
     }//getData
+
+    /*test = async() => {
+        let categories = await fetch("http://localhost:9000/categoriesAPI")
+        .then(res => res.json())
+        .catch(err => err);
+        let tempCat = categories["data"].map(item => {
+            let id=item.id;
+            let name=item.name.default;
+            let category={id,name};
+            return category;
+        })
+        console.log(tempCat);
+        let products = tempCat.map(item => {
+            console.log(item.id);
+            let catProducts = fetch(`http://localhost:9000/categoryProductsAPI?id=${item.id}`)
+                                    .then(res => res.json())
+                                    .catch(err => err);
+            console.log(catProducts);
+        })
+    }*/
 
     componentDidMount(){
         this.getData();
