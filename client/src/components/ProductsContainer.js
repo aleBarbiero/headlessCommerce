@@ -1,7 +1,7 @@
 import React from 'react'
 import ProductFilter from './ProductsFilter'
 import ProductList from './ProductsList'
-import {withProductConsumer} from '../context'
+import {withProductConsumer} from '../contextAPI'
 import Loading from './Loading'
 
 function ProductContainer({context}){

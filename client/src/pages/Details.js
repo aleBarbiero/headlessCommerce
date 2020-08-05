@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import defaultBack from '../images/404.png'
 import BannerContainter from '../components/BannerContainer'
 import {Link} from 'react-router-dom'
-import {ProductContext} from '../context'
+import {ProductContext} from '../contextAPI'
 import StyledBanner from '../components/StyledBanner'
 import Error from './Error'
 
@@ -12,14 +12,21 @@ export default class Details extends Component {
         super(props);
         this.state = {
             element:this.props.match.params.element,
-            defaultBack
+            defaultBack,
         };
     }
 
     static contextType = ProductContext;
 
-    componentDidMount(){
+    componentWillMount(){
         window.scrollTo(0,0);
+        this.getDetails();
+    }
+
+
+    async getDetails() {
+        const {getDetails} = this.context;
+        getDetails(this.state.element);
     }
 
     render() {

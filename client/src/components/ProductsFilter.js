@@ -1,6 +1,6 @@
 import React from 'react'
 import {useContext} from 'react'
-import {ProductContext} from '../context'
+import {ProductContext} from '../contextAPI'
 import Title from './Title'
 
 //unique filter
@@ -80,7 +80,7 @@ export default function ProductsFilter({products}) {
                     {/*price*/}
                     <div className="form-group">
                         <label htmlFor="price">Max price: ${price}</label>
-                        <input type="range" name="price" min={minPrice} max={maxPrice} id="price" value={price} onChange={handleChanges} className="form-control" step="50"></input>
+                        <input type="range" name="price" min={minPrice} max={maxPrice} id="price" value={price} onChange={handleChanges} className="form-control" step="10"></input>
                     </div>
                     {/*sort*/}
                     <div className="form-group">

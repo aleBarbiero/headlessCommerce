@@ -1,5 +1,6 @@
-import React from 'react'
-import {FaTrashAlt} from 'react-icons/fa'
+import React from 'react';
+import {Link} from 'react-router-dom';
+import {FaTrashAlt} from 'react-icons/fa';
 
 export default function CartItem({item,value}) {
     
@@ -9,7 +10,9 @@ export default function CartItem({item,value}) {
     return (
         <div className="flex-row">
             <div className="flex-col-img">
-                <img src={images[0]} alt={name} className="thumb-img"></img>
+                <Link to={`/list/${element}`}>
+                    <img src={images[0]} alt={name} className="thumb-img"></img>
+                </Link>
             </div>
             <div className="flex-col">
                 {name}

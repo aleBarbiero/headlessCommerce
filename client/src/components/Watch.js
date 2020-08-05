@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {ProductContext} from '../context';
+import {ProductContext} from '../contextAPI';
 import Title from './Title';
 import Loading from './Loading';
 import Product from './Product';
