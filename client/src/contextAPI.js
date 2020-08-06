@@ -84,8 +84,8 @@ export default class ProductProvider extends Component {
                     let extra=item.product.longDescription.default.source;
                     let descr=item.product.shortDescription.default.source;
                     let compatibility=[];
-                    for(let i=0;i<item.product.variants;i++){
-                        compatibility[i]=[item.variants[i].productId, item.variants[i].variationValues.compatibility];
+                    for(let i=0;i<item.product.variants.length;i++){
+                        compatibility[i]=[item.product.variants[i].productId, item.product.variants[i].variationValues.compatibility];
                     }
                     let product={id,type,name,price,element,brand,images,inStock,qty,total,extra,descr,compatibility};
                     return product;
