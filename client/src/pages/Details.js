@@ -13,12 +13,13 @@ export default class Details extends Component {
         this.state = {
             element:this.props.match.params.element,
             defaultBack,
+            details: ""
         };
     }
 
     static contextType = ProductContext;
 
-    componentWillMount(){
+    componentDidMount(){
         window.scrollTo(0,0);
         this.getDetails();
     }
@@ -26,7 +27,7 @@ export default class Details extends Component {
 
     async getDetails() {
         const {getDetails} = this.context;
-        getDetails(this.state.element);
+        this.setState({details:getDetails(this.state.element)});
     }
 
     render() {

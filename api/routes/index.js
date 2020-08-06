@@ -14,11 +14,15 @@ const config = {
         clientId: '8bfe8327-a12a-4ca5-93a4-ada2ab99c6e1',
         organizationId: 'f_ecom_bcld_s02',
         shortCode: 'nhmagqf3',
-        siteId: 'bikkembergs'
+        siteId: 'headlessCommerce'
     }
 }
 var basketToken;
 var basketId;
+var categoriesResult;
+var productDetailsResult;
+var searchResult;
+//var categoryProductsResult;
 
 async function getAuthToken(scope){
   let credentials = `${clientId}:${clientSecret}`;
@@ -46,7 +50,7 @@ async function getAuthToken(scope){
 
 router.get("/searchAPI",function(req,res,next){
     find(req.query.param);
-    res.send(toReturn);
+    res.send(searchResult);
 });
 
 find = (param) =>{
@@ -64,8 +68,8 @@ find = (param) =>{
             } else {
                 console.log("No results for search");
             }
-            toReturn=searchResults;
-            console.log(toReturn);
+            searchResult=searchResults;
+            console.log(searchResult);
         }catch (e){
             console.error(e);
             console.error(await e.response.text());
@@ -80,7 +84,7 @@ find = (param) =>{
 
 router.get("/detailsAPI",function(req,res,next){
   details(req.query.id)
-  res.send(toReturn) 
+  res.send(productDetailsResult) 
 });
 
 details = (id) =>{
@@ -94,8 +98,8 @@ details = (id) =>{
                   allImages: true
               }
           });
-          toReturn=productDetails;
-          console.log(toReturn);
+          productDetailsResult=productDetails;
+          console.log(productDetailsResult);
       }catch (e){
           console.error(e);
           console.error(await e.response.text());
@@ -110,7 +114,7 @@ details = (id) =>{
 
 router.get("/categoriesAPI",function(req,res,next){
   getCategories();
-  res.send(toReturn) 
+  res.send(categoriesResult) 
 });
 
 const getCategories = async () => {
@@ -119,15 +123,15 @@ const getCategories = async () => {
     if (!!!token)
         return;
     const productClient = new Product.Catalogs(config);
-    const categoriesResult = await productClient.getCategoriesFromCatalog({
+    const categories = await productClient.getCategoriesFromCatalog({
         parameters: {
-            catalogId: "bkk-storefront-catalog",
+            catalogId: "headless-storefront-catalog",
             limit: 10
         },
         headers: { authorization: `Bearer ${token}` }
     })
-    toReturn=categoriesResult;
-    console.log(toReturn);
+    categoriesResult=categories;
+    console.log(categoriesResult);
   }catch (e){
     console.error(e);
     console.error(await e.response.text());
@@ -137,11 +141,10 @@ const getCategories = async () => {
 //---------------CATEGORY-PRODUCTS---------------//
 
 router.get("/categoryProductsAPI",function(req,res,next){
-  getCategoryProducts(req.query.id);
-  res.send(toReturn) 
+  getCategoryProducts(req.query.id, res);
 });
 
-const getCategoryProducts = async (id) => {
+const getCategoryProducts = async (id,res) => {
     try{
         const token = await getAuthToken("sfcc.catalogs");
         if (!!!token)
@@ -149,18 +152,29 @@ const getCategoryProducts = async (id) => {
         const productClient = new Product.Catalogs(config);
         const categoriesResult = await productClient.searchProductsAssignedToCategory({
             parameters: {
-                catalogId: "bkk-storefront-catalog",
+                catalogId: "headless-storefront-catalog",
                 categoryId: id
             },
             headers: { authorization: `Bearer ${token}` },
             body: {
                 query: {
-                    onlineFlag: true
-                }
-            },
+                    termQuery: {
+                        fields: [
+                        "onlineFlag"
+                        ],
+                        operator: "is",
+                        values: [
+                        true
+                        ]
+                    }
+                },
+                select: "(**)"
+            }
         })
-        toReturn=categoriesResult;
-        console.log(toReturn);
+        let categoryProductsResult;
+        categoryProductsResult=categoriesResult;
+        console.log(categoryProductsResult);
+        res.send(categoryProductsResult);
     }catch (e){
         console.error(e);
         console.error(await e.response.text());
@@ -197,7 +211,7 @@ createBasket = async() =>{
 
 router.get("/getBasketAPI",function(req,res,next){
     getBasket();
-    res.send(toReturn) 
+    res.send(toReturn)
 });
   
 getBasket = async() =>{

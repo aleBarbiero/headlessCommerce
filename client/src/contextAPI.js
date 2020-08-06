@@ -4,25 +4,101 @@ const ProductContext= React.createContext();
 
 export default class ProductProvider extends Component {
 
-    state={
-        categories: [],
-        products:[],
-        sortedProducts: [],
-        cart:[],
-        cartTotal:0,
-        onesToWatch: [],
-        loading: true,
-        type: "all",
-        compatibility: "all",
-        brand: "all",
-        price: 0,
-        minPrice: 0,
-        maxPrice: 0,
-    };
+    constructor(){
+        super();
+        this.state={
+            categories: [],
+            products:[],
+            sortedProducts: [],
+            cart:[],
+            cartTotal:0,
+            onesToWatch: [],
+            loading: true,
+            type: "all",
+            compatibility: "all",
+            brand: "all",
+            price: 0,
+            minPrice: 0,
+            maxPrice: 0,
+        };
+    }
 
-    setUp = async() => {
+    async componentDidMount(){
+        /*categories*/
+        await this.getCategories()
+        .then(res => this.setState({categories: res}))
+        .then(res => {
+            this.setState({categories: this.clean(this.state.categories)});
+            console.log(this.state.categories)
+        })
+        /*products*/
+        .then(res => {
+            let temp=this.state.categories;
+            temp.map(async(item) => {
+                this.getProducts(item.id)
+                .then(res => this.setState({products: [...this.state.products,res],loading:false}))
+                .then(res => console.log(this.state.products))
+            })
+        })
+    }
+
+    clean = (list) =>{
+        return list.filter(function (el) {
+            return el != null;
+          });
+    }//clean
+
+    //getCategories
+    getCategories = () => {
+        return fetch("http://localhost:9000/categoriesAPI")
+        .then(res => res.json())
+        .then(categories => {
+            let tempCat = categories["data"].map(item => {
+                let id=item.id;
+                let name=item.id;
+                let category={id,name};
+                if(category.id!=="root")
+                    return category;
+            })
+            return tempCat;
+        })
+    }//getCategories
+
+    //getProducts
+    getProducts = (category) => {
+        return fetch(`http://localhost:9000/categoryProductsAPI?id=${category}`)
+        .then(res => res.json())
+        .then(products => {
+            let tempProd = products["hits"].map(item => {
+                if(item.product.type.master){
+                    let type=item.product.classificationCategory.categoryId;
+                    let id=item.productId;
+                    let name=item.productName.default;
+                    let price=item.product.price;
+                    let element=id;
+                    let brand=item.product.brand;
+                    let images=item.product.imageGroups[0].images.map(image => image.absUrl);
+                    let inStock=item.product.inStock;
+                    let qty=0;
+                    let total=0;
+                    let extra=item.product.longDescription.default.source;
+                    let descr=item.product.shortDescription.default.source;
+                    let compatibility=[];
+                    for(let i=0;i<item.product.variants;i++){
+                        compatibility[i]=[item.variants[i].productId, item.variants[i].variationValues.compatibility];
+                    }
+                    let product={id,type,name,price,element,brand,images,inStock,qty,total,extra,descr,compatibility};
+                    return product;
+                }
+            })
+            return this.clean(tempProd);
+        })
+    }//getProducts
+
+    /*setUp = async() => {
         try{
-            let products=await this.getProducts();
+            await this.getProducts();
+            let products=this.state.products;
             setTimeout(await this.getCart(),5000);
             let tempSorted=products.sort((a, b) => (a.price > b.price) ? 1 : -1);
             let onesToWatch=[tempSorted[0], tempSorted[1], tempSorted[2]];
@@ -49,33 +125,39 @@ export default class ProductProvider extends Component {
         .then(res => res.json())
     }
 
-    //getProducts
     getProducts = async() => {
-        let products = await fetch("http://localhost:9000/searchAPI?param=shoes")
+        let products = await 
         .then(res => res.json())
-        let tempProd = await products["hits"].map((item) => {
-            let element=item.productId;
-            let id=element;
-            let name=item.productName;
-            let brand="test";
-            let compatibility=["test"];
-            let type="shoes";
-            let price=item.price;
-            let extras=[]
-            let inCart=false;
-            let qty=0;
-            let total=0;
-            let images=[item.image.link,item.image.link,item.image.link];
-            let product={id,element,name,price,brand,compatibility,type,images,extras,inCart,qty,total};
-            return product;
+        .catch(e => this.getProducts())
+        .then(async(products) => {
+                let tempProd = await products["hits"].map((item) => {
+                let element=item.productId;
+                let id=element;
+                let name=item.productName;
+                let brand="test";
+                let compatibility=["test"];
+                let type="shoes";
+                let price=item.price;
+                let extras=[]
+                let inCart=false;
+                let qty=0;
+                let total=0;
+                let images=[item.image.link,item.image.link,item.image.link];
+                let product={id,element,name,price,brand,compatibility,type,images,extras,inCart,qty,total};
+                return product;
+            })
+            this.setState({
+                products:tempProd
+            })
         })
-        return tempProd;
     }
 
     //getCart
     getCart = async() => {
-        let res = await fetch("http://localhost:9000/getBasketAPI");
-        let tempCart = await res.json();
+        let res = await fetch("http://localhost:9000/getBasketAPI")
+        .then(res => res.json())
+        .catch(e => this.getCart)
+        let tempCart = await res;
         if(tempCart["productItems"])
             tempCart["productItems"].map(item => {
                 let tempProducts=[...this.state.products];
@@ -92,19 +174,6 @@ export default class ProductProvider extends Component {
                 })
                     })
     }
-
-    //getCategories
-    getCategories = async() => {
-        let res = await fetch("http://localhost:9000/categoriesAPI");
-        let categories = await res.json();
-        let tempCat = await categories["data"].map(item => {
-            let id=item.id;
-            let name=item.name.default;
-            let category={id,name};
-            return category;
-        })
-        return tempCat;
-    }//getCategories
 
     //sort
     sort = event => {
@@ -285,11 +354,7 @@ export default class ProductProvider extends Component {
         this.setState({
             sortedProducts:tempProducts
         })
-    }//filterProducts
-    
-    componentDidMount(){
-        this.setUp()
-    }
+    }//filterProducts*/
 
     render() {
         return (
