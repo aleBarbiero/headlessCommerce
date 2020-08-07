@@ -55,6 +55,12 @@ export default class ProductProvider extends Component {
                             price,
                             loading:false
                         })
+                        this.getCart().then(res => {
+                            if(res){
+                                this.addTotals();
+                                this.setState({cart:res});
+                            }
+                        })
                     }//if
                 })
             });
@@ -117,6 +123,42 @@ export default class ProductProvider extends Component {
         })
     }//getProducts
 
+    getCart = () => {
+        return fetch("http://localhost:9000/getBasketAPI")
+        .then(res => res.json())
+        .then(res => {
+            let arr=[];
+            if(res["productItems"]){
+                let tempCart=res["productItems"].map(res => {
+                    let cartProduct;
+                    let price=res.basePrice;
+                    let qty=res.quantity;
+                    let name=res.productName;
+                    let total=res.price;
+                    let tempProducts=this.state.products;
+                    let element,variationId,variation,images;
+                    tempProducts.map(product => {
+                        product.compatibility.map((comp,index) => {
+                            if(comp.id === res.productId){
+                                element=product.element;
+                                variationId=index;
+                                variation=comp.value;
+                                images=product.images;
+                                product.inCartStatus[index].qty=1;
+                                product.inCartStatus[index].inCart=true;
+                                product.inCartStatus[index].total=total;
+                            }
+                        })
+                    })
+                    cartProduct={element,variationId,variation,price,qty,name,total,images};
+                    return cartProduct;
+                })
+                return tempCart;
+            }else
+                return arr;
+        })
+    }
+
     //sort
     sort = event => {
         let {
@@ -158,6 +200,7 @@ export default class ProductProvider extends Component {
         let tempProducts=[...this.state.products];
         const index=tempProducts.indexOf(this.getProduct(id));
         const product=tempProducts[index];
+        fetch(`http://localhost:9000/addItemToBasketAPI?item=${product.compatibility[variation].id}`);
         product.inCartStatus[variation].inCart=true;
         product.inCartStatus[variation].qty=1;
         product.inCartStatus[variation].total=product.price;
