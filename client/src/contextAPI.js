@@ -34,17 +34,37 @@ export default class ProductProvider extends Component {
         /*products*/
         .then(res => {
             let temp=this.state.categories;
-            temp.map(async(item) => {
+            temp.map((item,index) => {
                 this.getProducts(item.id)
-                .then(res => this.setState({products: [...this.state.products,res],loading:false}))
-                .then(res => console.log(this.state.products))
-            })
+                .then(res => this.setState({products: this.state.products.concat(res)}))
+                .then(res => {
+                    if(index===temp.length-1){
+                        let products=this.state.products;
+                        console.log(products)
+                        let tempSorted=products.sort((a, b) => (a.price > b.price) ? 1 : -1);
+                        let onesToWatch=[tempSorted[0], tempSorted[1], tempSorted[2]];
+                        let minPrice=Math.min(...products.map(item => item.price));
+                        let maxPrice=Math.max(...products.map(item => item.price));
+                        let price=maxPrice;
+                        this.setState({
+                            products,
+                            sortedProducts:products,
+                            onesToWatch,
+                            maxPrice,
+                            minPrice,
+                            price,
+                            loading:false
+                        })
+                    }//if
+                })
+            });
         })
-    }
+        /*end-products*/
+    }//componentDidMount
 
     clean = (list) =>{
         return list.filter(function (el) {
-            return el != null;
+            return el != null && el !== "";
           });
     }//clean
 
@@ -79,101 +99,23 @@ export default class ProductProvider extends Component {
                     let brand=item.product.brand;
                     let images=item.product.imageGroups[0].images.map(image => image.absUrl);
                     let inStock=item.product.inStock;
-                    let qty=0;
-                    let total=0;
-                    let extra=item.product.longDescription.default.source;
-                    let descr=item.product.shortDescription.default.source;
+                    let extra=this.clean(item.product.longDescription.default.source.split('.'));
+                    let desc=item.product.shortDescription.default.source;
                     let compatibility=[];
                     for(let i=0;i<item.product.variants.length;i++){
-                        compatibility[i]=[item.product.variants[i].productId, item.product.variants[i].variationValues.compatibility];
+                        compatibility[i]={id: item.product.variants[i].productId, value: item.product.variants[i].variationValues.compatibility};
                     }
-                    let product={id,type,name,price,element,brand,images,inStock,qty,total,extra,descr,compatibility};
+                    let inCartStatus=[];
+                    compatibility.map((item,index) => {
+                        inCartStatus[index]={qty:0,inCart:false,total:0}
+                    })
+                    let product={id,type,name,price,element,brand,images,inStock,extra,desc,compatibility,inCartStatus};
                     return product;
                 }
             })
             return this.clean(tempProd);
         })
     }//getProducts
-
-    /*setUp = async() => {
-        try{
-            await this.getProducts();
-            let products=this.state.products;
-            setTimeout(await this.getCart(),5000);
-            let tempSorted=products.sort((a, b) => (a.price > b.price) ? 1 : -1);
-            let onesToWatch=[tempSorted[0], tempSorted[1], tempSorted[2]];
-            let minPrice=Math.min(...products.map(item => item.price));
-            let maxPrice=Math.max(...products.map(item => item.price));
-            let price=maxPrice;
-            this.setState({
-                products,
-                sortedProducts:products,
-                onesToWatch,
-                maxPrice,
-                minPrice,
-                price,
-                loading:false
-            })
-        }catch(error){
-            console.log(error);
-        }//try_catch
-    }//setUp
-
-    //getDetails
-    getDetails = async(id) => {
-        let res = await fetch(`http://localhost:9000/detailsAPI?id=${id}`)
-        .then(res => res.json())
-    }
-
-    getProducts = async() => {
-        let products = await 
-        .then(res => res.json())
-        .catch(e => this.getProducts())
-        .then(async(products) => {
-                let tempProd = await products["hits"].map((item) => {
-                let element=item.productId;
-                let id=element;
-                let name=item.productName;
-                let brand="test";
-                let compatibility=["test"];
-                let type="shoes";
-                let price=item.price;
-                let extras=[]
-                let inCart=false;
-                let qty=0;
-                let total=0;
-                let images=[item.image.link,item.image.link,item.image.link];
-                let product={id,element,name,price,brand,compatibility,type,images,extras,inCart,qty,total};
-                return product;
-            })
-            this.setState({
-                products:tempProd
-            })
-        })
-    }
-
-    //getCart
-    getCart = async() => {
-        let res = await fetch("http://localhost:9000/getBasketAPI")
-        .then(res => res.json())
-        .catch(e => this.getCart)
-        let tempCart = await res;
-        if(tempCart["productItems"])
-            tempCart["productItems"].map(item => {
-                let tempProducts=[...this.state.products];
-                const index=tempProducts.indexOf(this.getProduct(item.productId));
-                const product=tempProducts[index];
-                product.inCart=true;
-                product.qty=item.quantity;
-                product.total=product.price*product.qty;
-                this.setState(() => {
-                    return{products: tempProducts, cart: [...this.state.cart,product]}
-                },
-                () => {
-                    this.addTotals();
-                })
-                    })
-    }
 
     //sort
     sort = event => {
@@ -212,18 +154,17 @@ export default class ProductProvider extends Component {
     }//handleChanges
 
     //addToCart
-    addToCart = async(id) => {
-        await fetch(`http://localhost:9000/addItemToBasketAPI?item=${id}`)
-        .then(res => res.json())
-        .catch(err => err);
+    addToCart = async(id,variation) => {
         let tempProducts=[...this.state.products];
         const index=tempProducts.indexOf(this.getProduct(id));
         const product=tempProducts[index];
-        product.inCart=true;
-        product.qty=1;
-        product.total=product.price;
+        product.inCartStatus[variation].inCart=true;
+        product.inCartStatus[variation].qty=1;
+        product.inCartStatus[variation].total=product.price;
+        let cartProduct={element: product.element,variation: product.compatibility[variation].value,variationId: variation,name: product.name, price:product.price,
+            qty: product.inCartStatus[variation].qty,total: product.inCartStatus[variation].total,images: product.images}
         this.setState(() => {
-            return{products: tempProducts, cart: [...this.state.cart,product]}
+            return{products: tempProducts, cart: [...this.state.cart,cartProduct]}
         },
         () => {
             this.addTotals();
@@ -231,9 +172,9 @@ export default class ProductProvider extends Component {
     }
 
     //increment
-    increment = async(id) => {
+    increment = async(id,variation) => {
         let tempCart = [...this.state.cart];
-        const selectedProduct = tempCart.find(item => item.element === id);
+        const selectedProduct = tempCart.find(item => item.element === id && item.variationId === variation);
         const index = tempCart.indexOf(selectedProduct);
         const product = tempCart[index];
         product.qty++;
@@ -248,9 +189,9 @@ export default class ProductProvider extends Component {
     }
 
     //decrement
-    decrement = async(id) => {
+    decrement = async(id,variation) => {
         let tempCart = [...this.state.cart];
-        const selectedProduct = tempCart.find(item => item.element === id);
+        const selectedProduct = tempCart.find(item => item.element === id && item.variationId === variation);
         const index = tempCart.indexOf(selectedProduct);
         const product = tempCart[index];
         product.qty--;
@@ -273,20 +214,18 @@ export default class ProductProvider extends Component {
         }, () => {
             this.restoreValues();
         })
-        let cart = [...this.state.cart];
-        localStorage.setItem("cart",cart);
     }
 
     //removeItem
-    removeItem = async(id) => {
+    removeItem = async(id,variation) => {
         let tempProducts = [...this.state.products];
         let tempCart = [...this.state.cart];
-        tempCart = tempCart.filter(item => item.element !== id);
+        tempCart = tempCart.filter(item => item.element !== id || (item.element === id && item.variationId !== variation));
         const index = tempProducts.indexOf(this.getProduct(id));
         let removedProduct = tempProducts[index];
-        removedProduct.inCart=false;
-        removedProduct.qty=0;
-        removedProduct.total=0;
+        removedProduct.inCartStatus[variation].inCart=false;
+        removedProduct.inCartStatus[variation].qty=0;
+        removedProduct.inCartStatus[variation].total=0;
         this.setState(() => {
             return {
                 cart:[...tempCart],
@@ -295,17 +234,17 @@ export default class ProductProvider extends Component {
         },() => {
             this.addTotals();
         })
-        let cart = [...this.state.cart];
-        localStorage.setItem("cart",cart);
     }
 
     //restore
     restoreValues = () => {
         let prods=[...this.state.products];
         prods.map(item => {
-            item.qty=0;
-            item.total=0;
-            item.inCart=false;
+            item.inCartStatus.map(order => {
+                order.qty=0;
+                order.total=0;
+                order.inCart=false;
+            })
         })
         this.setState(() => {
             return {
@@ -317,7 +256,9 @@ export default class ProductProvider extends Component {
     //addTotals
     addTotals = () => {
         let cartTotal=0;
-        this.state.cart.map(item => (cartTotal += item.total));
+        this.state.cart.map(item => {
+            cartTotal+=item.total;
+        });
         this.setState(() => {
             return {
                 cartTotal: cartTotal
@@ -336,8 +277,16 @@ export default class ProductProvider extends Component {
         let tempProducts=[...products];
 
         //capacity
-        if(compatibility!=='all')
-            tempProducts=tempProducts.filter(product => product.compatibility.includes(compatibility))
+        if(compatibility!=='all'){
+            let tempFiltered=[];
+            tempProducts.map(product => {
+                product.compatibility.map((item) => {
+                    if(item.value.toLowerCase() === compatibility.toLowerCase())
+                        tempFiltered.push(product);
+                })
+            })
+            tempProducts=tempFiltered;
+        }
 
         //type
         if(type!=='all')
@@ -354,13 +303,13 @@ export default class ProductProvider extends Component {
         this.setState({
             sortedProducts:tempProducts
         })
-    }//filterProducts*/
+    }//filterProducts
 
     render() {
         return (
             <ProductContext.Provider value={{...this.state,getProduct: this.getProduct,handleChanges: this.handleChanges,
                 resetChanges:this.resetChanges,sort:this.sort, addToCart:this.addToCart, increment:this.increment,decrement:this.decrement,
-                removeItem:this.removeItem,clearCart:this.clearCart,getDetails: this.getDetails}}>
+            removeItem:this.removeItem,clearCart:this.clearCart,getDetails: this.getDetails}}>
                 {this.props.children}
             </ProductContext.Provider>
         );

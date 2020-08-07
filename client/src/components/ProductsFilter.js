@@ -15,7 +15,7 @@ const getUniqueBrand=(item) => {
 const getUniqueComp=(item) => {
     let toReturn=new Set();
     (item.map(item => {
-        item["compatibility"].map(item => toReturn.add(item));
+        item["compatibility"].map(item => toReturn.add(item.value));
     }));
     return toReturn;
 }

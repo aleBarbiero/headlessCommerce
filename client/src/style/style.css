@@ -80,6 +80,7 @@ h6 {
 .btn-primary:disabled {
   background: transparent;
   color: var(--primaryColor);
+  cursor: initial;
 }
 .loading {
   text-transform: capitalize;
@@ -90,6 +91,8 @@ h6 {
   text-align: center;
   text-transform: uppercase;
   margin: 2rem 0;
+  color: crimson;
+  letter-spacing: var(--mainSpacing);
 }
 .empty-search {
   text-align: center;
@@ -463,16 +466,29 @@ h6 {
     margin-bottom: 1em;
   }
 
-  .compat{
-    list-style-type: none;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-    grid-column-gap: 2rem;
-    grid-row-gap: 1rem;
-    text-transform: capitalize;
-    letter-spacing: var(--mainSpacing);
-  }
 }
+.btn-primary-choice {
+    display: inline-block;
+    text-decoration: none;
+    letter-spacing: var(--mainSpacing);
+    color: var(--mainBlack);
+    background: var(--primaryColor);
+    padding: 0.4rem 0.9rem;
+    border: 3px solid var(--primaryColor);
+    transition: var(--mainTransition);
+    text-transform: uppercase;
+    cursor: pointer;
+    margin: 0.5rem;
+  }
+  .btn-primary-choice:hover {
+    background: transparent;
+    color: var(--primaryColor);
+  }
+  .btn-primary-choice:disabled{
+    background: transparent;
+    color: var(--primaryColor);
+    cursor: initial;
+  }
 
 /* elementList */
 .productslist {
@@ -655,7 +671,6 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 /* cart */
-
 .container {
   padding-right: 15px;
   padding-left: 15px;

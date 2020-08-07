@@ -4,7 +4,7 @@ import {FaTrashAlt} from 'react-icons/fa';
 
 export default function CartItem({item,value}) {
     
-    const {element,name,images,price,total,qty} = item;
+    const {element,name,images,price,total,qty, variation, variationId} = item;
     const {increment,decrement,removeItem} = value;
 
     return (
@@ -15,20 +15,20 @@ export default function CartItem({item,value}) {
                 </Link>
             </div>
             <div className="flex-col">
-                {name}
+                {name} - {variation}
             </div>
             <div className="flex-col">
                 {price}€
             </div>
             <div className="flex-col">
-                <button className="small-btn" onClick={() => {decrement(element)}}
+                <button className="small-btn" onClick={() => {decrement(element,variationId)}}
                     disabled={qty===1?true:false}>-</button>
                 <button className="small-btn" disabled={true}>{qty}</button>
-                <button className="small-btn" onClick={() => {increment(element)}}
+                <button className="small-btn" onClick={() => {increment(element,variationId)}}
                     disabled={qty===10?true:false}>+</button>
             </div>
             <div className="flex-col">
-                <button className="small-icon-btn" onClick={() => {removeItem(element)}}>
+                <button className="small-icon-btn" onClick={() => {removeItem(element,variationId)}}>
                     <FaTrashAlt className="small-icon"></FaTrashAlt>
                 </button>
             </div>

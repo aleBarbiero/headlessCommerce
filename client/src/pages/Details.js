@@ -13,7 +13,9 @@ export default class Details extends Component {
         this.state = {
             element:this.props.match.params.element,
             defaultBack,
-            details: ""
+            details: "",
+            current: null,
+            error: ""
         };
     }
 
@@ -21,13 +23,17 @@ export default class Details extends Component {
 
     componentDidMount(){
         window.scrollTo(0,0);
-        this.getDetails();
+
     }
-
-
-    async getDetails() {
-        const {getDetails} = this.context;
-        this.setState({details:getDetails(this.state.element)});
+    
+    disableOthers = (index,max) => {
+        for(let i=0;i<max;i++){
+            if(i!==index && this.refs['comp' + i])
+                this.refs['comp' + i].removeAttribute("disabled")
+            else if(this.refs['comp' + i])
+                this.refs['comp' + i].setAttribute("disabled","disabled")
+        }
+        this.setState({current:index})
     }
 
     render() {
@@ -40,15 +46,15 @@ export default class Details extends Component {
         const {
             name,
             element,
-            description,
+            desc,
             brand,
             price,
             compatibility,
-            extras,
+            extra,
             images,
-            inCart
+            inCartStatus
         } = product;
-
+        
         return (
             <>
                 <StyledBanner img={images[0] || this.state.defaultImg}>
@@ -59,30 +65,38 @@ export default class Details extends Component {
                     </BannerContainter>
                 </StyledBanner>
                 <section className="single-product">
+                    <div className="error">
+                        <h2>{this.state.error}</h2>
+                    </div>
+                    
                     <div className="single-product-info">
                         <article className="desc">
-                            <button className="btn-primary" disabled={inCart?true:false} onClick={() => {addToCart(element)}}>
-                                {inCart ? "in cart" : "add to cart"}
+                            <button className="btn-primary" disabled={this.state.current===null?true:inCartStatus[this.state.current].inCart?true:false}
+                                onClick={() => {addToCart(element,this.state.current)}}>
+                            {this.state.current===null ? "add to cart" : inCartStatus[this.state.current].inCart?"in cart":"add to cart"}
                             </button>
                             <h3>Description</h3>
-                            <p>{description}</p>
+                            <p>{desc}</p>
                         </article>
                         <article className="info">
                             <h3>Details</h3>
                             <h6>Price: {price}€</h6>
                             <h6>Brand: {brand}</h6>
                             <h6>Compatibility:</h6>
-                            <ul className="compat">
-                                {compatibility.map((item, index) => {
-                                    return <li key={index}>- {item}</li>
-                                })}
+                            <ul className="compatibility">
+                                {  
+                                    compatibility.map((item,index) => {
+                                        return <button ref={"comp".concat(index)} className="btn-primary-choice"
+                                                    onClick={() => this.disableOthers(index,compatibility.length)} key={item.id}>{item.value}</button>
+                                    })  
+                                }
                             </ul>
                         </article>
                     </div>
                     <section className="product-extras">
                         <h6>More</h6>
                         <ul className="extras">
-                            {extras.map((item, index) => {
+                            {extra.map((item, index) => {
                                 return <li key={index}>- {item}</li>
                             })}
                         </ul>
