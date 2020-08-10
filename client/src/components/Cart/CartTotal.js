@@ -6,7 +6,7 @@ export default function CartTotal({value}) {
     
     return (
         <>
-            <div className="container">
+            <div className="container-total">
                 <div className="flex-row-last">
                     <div className="flex-column">
                         <button className="btn-primary-red" onClick={() => {clearCart()}}>

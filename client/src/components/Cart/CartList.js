@@ -5,9 +5,9 @@ export default function CartList({value}) {
 
     const {cart} = value;
     return (
-        <div className="container">
+        <div className="container-list">
             {cart.map(item => {
-                return <CartItem key={item.element} item={item} value={value}></CartItem>
+                return <CartItem key={item.element + item.variation} item={item} value={value}></CartItem>
             })}
             
         </div>

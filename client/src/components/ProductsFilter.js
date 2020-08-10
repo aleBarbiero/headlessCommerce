@@ -4,15 +4,15 @@ import {ProductContext} from '../contextAPI'
 import Title from './Title'
 
 //unique filter
-const getUniqueType=(item) => {
+const getUniqueType = (item) => {
     return [...new Set(item.map(item => item["type"]))].sort()
 }
 
-const getUniqueBrand=(item) => {
+const getUniqueBrand = (item) => {
     return [...new Set(item.map(item => item["brand"]))].sort()
 }
 
-const getUniqueComp=(item) => {
+const getUniqueComp = (item) => {
     let toReturn=new Set();
     (item.map(item => {
         item["compatibility"].map(item => toReturn.add(item.value));
@@ -20,11 +20,15 @@ const getUniqueComp=(item) => {
     return toReturn;
 }
 
+const defaultValues = () => {
+
+}
+
 export default function ProductsFilter({products}) {
     const context=useContext(ProductContext);
     const {
         handleChanges,
-        resetFilters,
+        resetChanges,
         sort,
         type,
         brand,
@@ -94,7 +98,7 @@ export default function ProductsFilter({products}) {
                     </div>
                     {/*reset*/}
                     <div className="form-group">
-                        <button className="btn-primary" onClick={resetFilters}>
+                        <button type="button" className="btn-primary" onClick={resetChanges}>
                             Reset filters
                         </button>
                     </div>

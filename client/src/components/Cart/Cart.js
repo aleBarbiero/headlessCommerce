@@ -4,6 +4,7 @@ import CartColumns from "./CartColumns";
 import EmptyCart from './EmptyCart';
 import CartList from './CartList';
 import CartTotal from './CartTotal';
+import Loading from '../Loading'
 import {ProductConsumer} from '../../contextAPI';
 
 export default class Cart extends Component {
@@ -12,8 +13,10 @@ export default class Cart extends Component {
             <section>
                 <ProductConsumer>
                     {value => {
-                        const {cart} = value;
-                        if(cart.length>0)
+                        const {cart,cartLoading} = value;
+                        if(cartLoading)
+                            return <Loading></Loading>
+                        else if(cart.length>0)
                             return(
                                 <>
                                     <Title title="your cart"></Title>

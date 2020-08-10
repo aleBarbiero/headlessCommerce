@@ -20,9 +20,10 @@ const config = {
 var basketToken;
 var basketId;
 var categoriesResult;
+let categoryProductsResult
 var productDetailsResult;
 var searchResult;
-//var categoryProductsResult;
+var cartResponse;
 
 async function getAuthToken(scope){
   let credentials = `${clientId}:${clientSecret}`;
@@ -46,11 +47,21 @@ async function getAuthToken(scope){
   return token;
 }
 
+async function findInCart(id){
+    let itemId="temp";
+    if(cartResponse["productItems"]){
+        cartResponse["productItems"].map(item => {
+            if(item.productId === id)
+                itemId=item.itemId;
+        })
+    }
+    return itemId;
+}
+
 //---------------SEARCH---------------//
 
 router.get("/searchAPI",function(req,res,next){
-    find(req.query.param);
-    res.send(searchResult);
+    find(req.query.param).then(now => res.send(searchResult));
 });
 
 find = (param) =>{
@@ -62,6 +73,9 @@ find = (param) =>{
               parameters:{
                 q:param,
                 limit: 50
+              },
+              retrySettings:{
+                  forever: true
               }         
             });
             if (searchResults.total) {
@@ -69,7 +83,6 @@ find = (param) =>{
                 console.log("No results for search");
             }
             searchResult=searchResults;
-            console.log(searchResult);
         }catch (e){
             console.error(e);
             console.error(await e.response.text());
@@ -83,8 +96,7 @@ find = (param) =>{
 //---------------DETAILS---------------//
 
 router.get("/detailsAPI",function(req,res,next){
-  details(req.query.id)
-  res.send(productDetailsResult) 
+  details(req.query.id).then(now => res.send(productDetailsResult))
 });
 
 details = (id) =>{
@@ -96,10 +108,12 @@ details = (id) =>{
               parameters:{
                   id: id,
                   allImages: true
-              }
+              },
+              retrySettings:{
+                forever: true
+            } 
           });
           productDetailsResult=productDetails;
-          console.log(productDetailsResult);
       }catch (e){
           console.error(e);
           console.error(await e.response.text());
@@ -113,8 +127,7 @@ details = (id) =>{
 //---------------CATEGORIES---------------//
 
 router.get("/categoriesAPI",function(req,res,next){
-  getCategories();
-  res.send(categoriesResult) 
+  getCategories().then(now => res.send(categoriesResult)); 
 });
 
 const getCategories = async () => {
@@ -128,10 +141,12 @@ const getCategories = async () => {
             catalogId: "headless-storefront-catalog",
             limit: 10
         },
-        headers: { authorization: `Bearer ${token}` }
+        headers: { authorization: `Bearer ${token}` },
+        retrySettings:{
+            forever: true
+        } 
     })
     categoriesResult=categories;
-    console.log(categoriesResult);
   }catch (e){
     console.error(e);
     console.error(await e.response.text());
@@ -141,7 +156,7 @@ const getCategories = async () => {
 //---------------CATEGORY-PRODUCTS---------------//
 
 router.get("/categoryProductsAPI",function(req,res,next){
-  getCategoryProducts(req.query.id, res);
+  getCategoryProducts(req.query.id, res).then(now => res.send(categoryProductsResult));
 });
 
 const getCategoryProducts = async (id,res) => {
@@ -154,6 +169,9 @@ const getCategoryProducts = async (id,res) => {
             parameters: {
                 catalogId: "headless-storefront-catalog",
                 categoryId: id
+            },
+            retrySettings:{
+                forever: true
             },
             headers: { authorization: `Bearer ${token}` },
             body: {
@@ -171,10 +189,7 @@ const getCategoryProducts = async (id,res) => {
                 select: "(**)"
             }
         })
-        let categoryProductsResult;
         categoryProductsResult=categoriesResult;
-        console.log(categoryProductsResult);
-        res.send(categoryProductsResult);
     }catch (e){
         console.error(e);
         console.error(await e.response.text());
@@ -198,8 +213,12 @@ createBasket = async() =>{
                 },
                 body: {
                     email: "example_customer@temp.com"
-                }
+                },
+                retrySettings:{
+                    forever: true
+                } 
           })
+          cartResponse=searchResults;
           toReturn = det;
       }catch (e){
           console.error(e);
@@ -210,8 +229,7 @@ createBasket = async() =>{
 //---------------GET-BASKET---------------//
 
 router.get("/getBasketAPI",function(req,res,next){
-    getBasket();
-    res.send(toReturn)
+    getBasket().then(now => res.send(toReturn));
 });
   
 getBasket = async() =>{
@@ -222,8 +240,12 @@ getBasket = async() =>{
             const searchResults = await shopperClient.getBasket({
                 parameters: {
                     basketId: basketId
-                }
+                },
+                retrySettings:{
+                    forever: true
+                } 
             })
+            cartResponse=searchResults;
             toReturn=searchResults;
         }catch (e){
             createBasket();
@@ -236,8 +258,7 @@ getBasket = async() =>{
 //---------------ADD-ITEM-BASKET---------------//
 
 router.get("/addItemToBasketAPI",function(req,res,next){
-    addItemToBasket(req.query.item);
-    res.send(toReturn) 
+    addItemToBasket(req.query.item).then(now => res.send(toReturn)); 
 });
   
 addItemToBasket = async(item) =>{
@@ -248,17 +269,94 @@ addItemToBasket = async(item) =>{
             parameters: {
                 basketId: basketId
             },
+            retrySettings:{
+                forever: true
+            },
             body:[{
                 productId: item,
                 quantity: 1
             }]
         })
+        cartResponse=searchResults;
         toReturn=searchResults;
-        console.log(toReturn);
     }catch (e){
         console.log(e);
     }//internal-try-catch
 }//getBasket
 
+//---------------REMOVE-ITEM-BASKET---------------//
+
+router.get("/removeItemToBasketAPI",function(req,res,next){
+    removeItem(req.query.item).then(now => res.send(toReturn));
+})
+
+removeItem = async(item) => {
+    try{
+        let id=await findInCart(item);
+        config.headers["authorization"] = basketToken.getBearerHeader();
+        const shopperClient = new Checkout.ShopperBaskets(config);
+        const itemResult = await shopperClient.removeItemFromBasket({
+            parameters:{
+                basketId: basketId,
+                itemId: id
+            },
+            retrySettings:{
+                forever: true
+            }
+        })
+        cartResponse=itemResult;
+        toReturn=itemResult;
+    }catch (e){
+        console.log(e);
+    }//internal-try-catch
+}//updateItem
+
+//---------------UPDATE-ITEM-BASKET---------------//
+
+router.get("/updateItemToBasketAPI",function(req,res,next){
+    updateItem(req.query.item,req.query.tot).then(now => res.send(toReturn));
+})
+
+updateItem = async(item,tot) => {
+    try{
+        let id=await findInCart(item);
+        config.headers["authorization"] = basketToken.getBearerHeader();
+        const shopperClient = new Checkout.ShopperBaskets(config);
+        const itemResult = await shopperClient.updateItemInBasket({
+            parameters:{
+                basketId: basketId,
+                itemId: id
+            },
+            body:{
+                productId: item,
+                quantity: parseInt(tot)
+            }
+        })
+        toReturn=itemResult;
+    }catch (e){
+        console.log(e);
+    }//internal-try-catch
+}//updateItem
+
+//---------------CLEAR-BASKET---------------//
+
+router.get("/clearBasketAPI",function(req,res,next){
+    clearCart().then(now => res.send(toReturn));
+})
+
+clearCart = async() => {
+    try{
+        config.headers["authorization"] = basketToken.getBearerHeader();
+        const shopperClient = new Checkout.ShopperBaskets(config);
+        const basketResult = await shopperClient.deleteBasket({
+            parameters:{
+                basketId: basketId
+            }
+        })
+        toReturn = await createBasket();
+    }catch(e){
+        console.log(e)
+    }//internal-try-catch
+}//clearCart
 
 module.exports=router;

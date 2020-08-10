@@ -14,6 +14,8 @@ export default class ProductProvider extends Component {
             cartTotal:0,
             onesToWatch: [],
             loading: true,
+            cartLoading: true,
+            siteLoading: true,
             type: "all",
             compatibility: "all",
             brand: "all",
@@ -21,11 +23,12 @@ export default class ProductProvider extends Component {
             minPrice: 0,
             maxPrice: 0,
         };
+        this.setUp();
     }
 
-    async componentDidMount(){
+     setUp(){
         /*categories*/
-        await this.getCategories()
+         this.getCategories()
         .then(res => this.setState({categories: res}))
         .then(res => {
             this.setState({categories: this.clean(this.state.categories)});
@@ -57,8 +60,13 @@ export default class ProductProvider extends Component {
                         })
                         this.getCart().then(res => {
                             if(res){
-                                this.addTotals();
-                                this.setState({cart:res});
+                                this.setState(() => {
+                                    return {
+                                        cart:res,
+                                        cartLoading:false,
+                                        siteLoading:false
+                                    }
+                                },() => this.addTotals());
                             }
                         })
                     }//if
@@ -88,6 +96,7 @@ export default class ProductProvider extends Component {
             })
             return tempCat;
         })
+        .catch(error => window.location.reload(true))
     }//getCategories
 
     //getProducts
@@ -121,6 +130,7 @@ export default class ProductProvider extends Component {
             })
             return this.clean(tempProd);
         })
+        .catch(error => window.location.reload(true))
     }//getProducts
 
     getCart = () => {
@@ -136,10 +146,11 @@ export default class ProductProvider extends Component {
                     let name=res.productName;
                     let total=res.price;
                     let tempProducts=this.state.products;
-                    let element,variationId,variation,images;
+                    let element,variationId,variation,images,id;
                     tempProducts.map(product => {
                         product.compatibility.map((comp,index) => {
                             if(comp.id === res.productId){
+                                id=comp.id;
                                 element=product.element;
                                 variationId=index;
                                 variation=comp.value;
@@ -150,13 +161,14 @@ export default class ProductProvider extends Component {
                             }
                         })
                     })
-                    cartProduct={element,variationId,variation,price,qty,name,total,images};
+                    cartProduct={element,variationId,variation,price,qty,name,total,images,id};
                     return cartProduct;
                 })
                 return tempCart;
             }else
                 return arr;
         })
+        .catch(error => window.location.reload(false))
     }
 
     //sort
@@ -200,12 +212,12 @@ export default class ProductProvider extends Component {
         let tempProducts=[...this.state.products];
         const index=tempProducts.indexOf(this.getProduct(id));
         const product=tempProducts[index];
-        fetch(`http://localhost:9000/addItemToBasketAPI?item=${product.compatibility[variation].id}`);
         product.inCartStatus[variation].inCart=true;
         product.inCartStatus[variation].qty=1;
         product.inCartStatus[variation].total=product.price;
+        fetch(`http://localhost:9000/addItemToBasketAPI?item=${product.compatibility[variation].id}`)
         let cartProduct={element: product.element,variation: product.compatibility[variation].value,variationId: variation,name: product.name, price:product.price,
-            qty: product.inCartStatus[variation].qty,total: product.inCartStatus[variation].total,images: product.images}
+            qty: product.inCartStatus[variation].qty,total: product.inCartStatus[variation].total,images: product.images,id:product.compatibility[variation].id}
         this.setState(() => {
             return{products: tempProducts, cart: [...this.state.cart,cartProduct]}
         },
@@ -222,6 +234,7 @@ export default class ProductProvider extends Component {
         const product = tempCart[index];
         product.qty++;
         product.total=product.qty*product.price;
+        fetch(`http://localhost:9000/updateItemToBasketAPI?item=${product.id}&tot=${product.qty}`)
         this.setState(() => {
             return {
                 cart:[...tempCart]
@@ -238,6 +251,7 @@ export default class ProductProvider extends Component {
         const index = tempCart.indexOf(selectedProduct);
         const product = tempCart[index];
         product.qty--;
+        fetch(`http://localhost:9000/updateItemToBasketAPI?item=${product.id}&tot=${product.qty}`)
         product.total=product.qty*product.price;
         this.setState(() => {
             return {
@@ -250,6 +264,7 @@ export default class ProductProvider extends Component {
 
     //clearCart
     clearCart = () => {
+        fetch("http://localhost:9000/clearBasketAPI")
         this.setState(() => {
             return{
                 cart:[]
@@ -263,6 +278,10 @@ export default class ProductProvider extends Component {
     removeItem = async(id,variation) => {
         let tempProducts = [...this.state.products];
         let tempCart = [...this.state.cart];
+        const selectedCart = tempCart.find(item => item.element === id && item.variationId === variation);
+        const indexCart=tempCart.indexOf(selectedCart);
+        const item=tempCart[indexCart].id;
+        fetch(`http://localhost:9000/removeItemToBasketAPI?item=${item}`)
         tempCart = tempCart.filter(item => item.element !== id || (item.element === id && item.variationId !== variation));
         const index = tempProducts.indexOf(this.getProduct(id));
         let removedProduct = tempProducts[index];
