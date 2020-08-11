@@ -15,7 +15,6 @@ export default class ProductProvider extends Component {
             onesToWatch: [],
             loading: true,
             cartLoading: true,
-            siteLoading: true,
             type: "all",
             compatibility: "all",
             brand: "all",
@@ -38,7 +37,7 @@ export default class ProductProvider extends Component {
         .then(res => {
             let temp=this.state.categories;
             temp.map((item,index) => {
-                this.getProducts(item.id)
+                return this.getProducts(item.id)
                 .then(res => this.setState({products: this.state.products.concat(res)}))
                 .then(res => {
                     if(index===temp.length-1){
@@ -63,8 +62,7 @@ export default class ProductProvider extends Component {
                                 this.setState(() => {
                                     return {
                                         cart:res,
-                                        cartLoading:false,
-                                        siteLoading:false
+                                        cartLoading:false
                                     }
                                 },() => this.addTotals());
                             }
@@ -93,6 +91,8 @@ export default class ProductProvider extends Component {
                 let category={id,name};
                 if(category.id!=="root")
                     return category;
+                else   
+                    return null;
             })
             return tempCat;
         })
@@ -122,11 +122,12 @@ export default class ProductProvider extends Component {
                     }
                     let inCartStatus=[];
                     compatibility.map((item,index) => {
-                        inCartStatus[index]={qty:0,inCart:false,total:0}
+                        return inCartStatus[index]={qty:0,inCart:false,total:0}
                     })
                     let product={id,type,name,price,element,brand,images,inStock,extra,desc,compatibility,inCartStatus};
                     return product;
                 }
+                return null;
             })
             return this.clean(tempProd);
         })
@@ -146,12 +147,13 @@ export default class ProductProvider extends Component {
                     let name=res.productName;
                     let total=res.price;
                     let tempProducts=this.state.products;
-                    let element,variationId,variation,images,id;
+                    let element,variationId,variation,images,id,brand;
                     tempProducts.map(product => {
                         product.compatibility.map((comp,index) => {
                             if(comp.id === res.productId){
                                 id=comp.id;
                                 element=product.element;
+                                brand=product.brand;
                                 variationId=index;
                                 variation=comp.value;
                                 images=product.images;
@@ -159,9 +161,11 @@ export default class ProductProvider extends Component {
                                 product.inCartStatus[index].inCart=true;
                                 product.inCartStatus[index].total=total;
                             }
+                            return null;
                         })
+                        return null;
                     })
-                    cartProduct={element,variationId,variation,price,qty,name,total,images,id};
+                    cartProduct={element,variationId,variation,price,qty,name,total,images,id,brand};
                     return cartProduct;
                 })
                 return tempCart;
@@ -306,7 +310,9 @@ export default class ProductProvider extends Component {
                 order.qty=0;
                 order.total=0;
                 order.inCart=false;
+                return order;
             })
+            return item;
         })
         this.setState(() => {
             return {
@@ -320,6 +326,7 @@ export default class ProductProvider extends Component {
         let cartTotal=0;
         this.state.cart.map(item => {
             cartTotal+=item.total;
+            return null;
         });
         this.setState(() => {
             return {
@@ -345,7 +352,9 @@ export default class ProductProvider extends Component {
                 product.compatibility.map((item) => {
                     if(item.value.toLowerCase() === compatibility.toLowerCase())
                         tempFiltered.push(product);
+                    return null;
                 })
+                return null;
             })
             tempProducts=tempFiltered;
         }

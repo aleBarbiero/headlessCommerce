@@ -87,6 +87,12 @@ h6 {
   text-align: center;
   margin-top: 3rem;
 }
+.loading-cart {
+  text-transform: capitalize;
+  text-align: center;
+  margin-top: 15rem;
+  height: 34rem;
+}
 .error {
   text-align: center;
   text-transform: uppercase;
@@ -517,7 +523,7 @@ h6 {
 
 /* Filters */
 .filter-container {
-  padding: 5rem 0;
+  padding: 2rem 0;
 }
 .filter-form {
   width: 60vw;
@@ -865,4 +871,226 @@ padding-left: 2rem;
   align-self: center;
   margin-left: auto;
   margin-right: 2em;
+}
+
+/*checkout*/
+.checkout-container{
+  width: 70%;
+  margin: auto;
+  display: table;
+  border-spacing: 2rem;
+  margin-bottom: 2rem;
+}
+
+.form-wrapper {
+  display: table-cell;
+  color: var(--mainBlack);
+  background-color: var(--mainWhite);
+  border: 1px solid var(--primaryColor);
+  -webkit-box-shadow: 9px 13px 25px 0px rgba(0, 0, 0, 0.18);
+  -moz-box-shadow: 9px 13px 25px 0px rgba(0, 0, 0, 0.18);
+  box-shadow: 9px 13px 25px 0px rgba(0, 0, 0, 0.18);
+}
+
+.form-container {
+  width: 100%;
+  padding: 5% 10%;
+}
+
+form {
+  width: 100%;
+}
+form > * {
+  margin-top: 1.5rem;
+}
+.form-container form input {
+  width: 100%;
+  min-height: 25px;
+  border: 1px solid var(--primaryColor);
+  font-size: 1rem;
+  letter-spacing: var(--mainSpacing);
+  border-radius: 4px;
+}
+form label {
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: var(--mainSpacing);
+  color: var(--mainBlack);
+}
+form h1 {
+  font-size: 24px;
+  color: var(--mainBlack);
+  letter-spacing: var(--mainSpacing);
+}
+
+.name {
+  justify-content: space-between;
+  display: flex;
+  width: 100%;
+}
+.name div {
+  width: 45%;
+}
+
+.address-info-street .address{
+  width: 55%;
+}
+
+.address-info-street .country{
+  width: 30%;
+}
+
+.address-info-street .number{
+  width:10%;
+}
+
+.address-info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.address-info-street {
+  display: flex;
+  justify-content: space-between;
+}
+
+.address-info div {
+  width: 30%;
+}
+
+.cc-info {
+  display: flex;
+  justify-content: space-between;
+}
+.cc-info div {
+  width: 45%;
+}
+
+input:focus,
+button:focus {
+  outline: none;
+}
+
+.checkout-icon{
+  vertical-align: bottom;
+}
+
+.expires{
+  display: grid;
+}
+
+.selects{
+  display: flex;
+  justify-content: space-between;
+}
+
+.expires select{
+  width: 15rem;
+  color: var(--mainBlack);
+  text-align: center;
+  letter-spacing: var(--mainSpacing);
+  align-items: center;
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  border-bottom: 1px solid var(--primaryColor);
+  background-color: var(--mainWhite);
+}
+
+.expires select:focus{
+  outline: none;
+}
+
+.form-wrapper-cart{
+  width: 40%;
+  display: table-cell;
+  color: var(--mainBlack);
+  background-color: var(--mainWhite);
+  border: 1px solid var(--primaryColor);
+  -webkit-box-shadow: 9px 13px 25px 0px rgba(0, 0, 0, 0.18);
+  -moz-box-shadow: 9px 13px 25px 0px rgba(0, 0, 0, 0.18);
+  box-shadow: 9px 13px 25px 0px rgba(0, 0, 0, 0.18);
+}
+
+.btns{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.cart-checkout-total{
+  border-top: 1px solid var(--primaryColor);
+  margin-top: 1rem;
+  padding-top: 1rem;
+  text-align: right;
+}
+
+.checkout-element{
+  list-style-type: none;
+}
+
+.checkout-element-price{
+  text-align: right;
+}
+
+@media (max-width: 1040px) {
+  .checkout-container{
+    width: 100%;
+  }
+
+  .form-wrapper {
+    margin-left: 5%;
+    display: flex;
+  }
+
+  .form-wrapper-cart{
+    width: 95%;
+    margin-left: 5%;
+    margin-top: 4%;
+    display: flex;
+  }
+
+  .form-container {
+    width: 100%;
+  }
+
+  .btns{
+    display: block;
+    justify-content: center;
+  }
+
+  .btns button{
+    position: relative;
+  }
+
+  form h1 {
+    text-align: center;
+    line-height: normal;
+  }
+
+  .name,
+  .address-info,
+  .cc-info {
+    flex-direction: column;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .name div,
+  .address-info div,
+  .cc-info div {
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    display: flex;
+  }
+
+  .street,
+  .cc-num {
+    text-align: center;
+  }
+
+  input {
+    margin: 5px 0;
+    min-height: 30px;
+  }
 }

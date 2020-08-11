@@ -1,13 +1,18 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import Title from '../Title';
 import CartColumns from "./CartColumns";
 import EmptyCart from './EmptyCart';
 import CartList from './CartList';
 import CartTotal from './CartTotal';
-import Loading from '../Loading'
+import Loading from './LoadingCart'
 import {ProductConsumer} from '../../contextAPI';
 
 export default class Cart extends Component {
+
+    componentDidMount(){
+        window.scrollTo(0,0)
+    }
+
     render() {
         return (
             <section>

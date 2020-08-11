@@ -4,17 +4,17 @@ var commerceSDK=require("commerce-sdk");
 const makeFetch = require('make-fetch-happen');
 const {ClientConfig,helpers,Search,Product,Checkout}=commerceSDK;
 var toReturn;
-const clientId = "8bfe8327-a12a-4ca5-93a4-ada2ab99c6e1";
-const clientSecret = "HeadlessCommercePOC";
-const realm = "bcld";
-const instance = "s02";
+const clientId = "";
+const clientSecret = "";
+const realm = "";
+const instance = "";
 const config = {
     headers: {},
     parameters: {
-        clientId: '8bfe8327-a12a-4ca5-93a4-ada2ab99c6e1',
-        organizationId: 'f_ecom_bcld_s02',
-        shortCode: 'nhmagqf3',
-        siteId: 'headlessCommerce'
+        clientId: '',
+        organizationId: '',
+        shortCode: '',
+        siteId: ''
     }
 }
 var basketToken;

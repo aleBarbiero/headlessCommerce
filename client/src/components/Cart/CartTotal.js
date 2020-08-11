@@ -1,4 +1,5 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 
 export default function CartTotal({value}) {
     
@@ -11,10 +12,10 @@ export default function CartTotal({value}) {
                     <div className="flex-column">
                         <button className="btn-primary-red" onClick={() => {clearCart()}}>
                             clear cart
-                        </button>
+                        </button><Link to="/cart/checkout" >
                         <button className="btn-primary-green">
                             buy now
-                        </button>
+                        </button></Link>
                      </div>   
                         <span className="total-title">
                             <strong>Total: {cartTotal}€</strong>

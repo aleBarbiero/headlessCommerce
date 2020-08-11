@@ -15,13 +15,9 @@ const getUniqueBrand = (item) => {
 const getUniqueComp = (item) => {
     let toReturn=new Set();
     (item.map(item => {
-        item["compatibility"].map(item => toReturn.add(item.value));
+        return item["compatibility"].map(item => toReturn.add(item.value));
     }));
     return toReturn;
-}
-
-const defaultValues = () => {
-
 }
 
 export default function ProductsFilter({products}) {

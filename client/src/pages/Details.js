@@ -14,8 +14,7 @@ export default class Details extends Component {
             element:this.props.match.params.element,
             defaultBack,
             details: "",
-            current: null,
-            error: ""
+            current: null
         };
     }
 
@@ -65,10 +64,6 @@ export default class Details extends Component {
                     </BannerContainter>
                 </StyledBanner>
                 <section className="single-product">
-                    <div className="error">
-                        <h2>{this.state.error}</h2>
-                    </div>
-                    
                     <div className="single-product-info">
                         <article className="desc">
                             <button className="btn-primary" disabled={this.state.current===null?true:inCartStatus[this.state.current].inCart?true:false}
@@ -103,8 +98,7 @@ export default class Details extends Component {
                     </section>
                     <div className="single-product-images">
                         {images.map((item,index) => {
-                            if(index!==0)
-                                return <img key={index} src={item} alt={name}></img>
+                            return <img key={index} src={item} alt={name}></img>
                         })}
                     </div>
                 </section>
