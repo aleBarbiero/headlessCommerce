@@ -205,7 +205,7 @@ createBasket = async() =>{
           config.headers["authorization"] = basketToken.getBearerHeader();
           const shopperClient = new Checkout.ShopperBaskets(config);
           const searchResults = await shopperClient.createBasket({
-                body: {},
+                body: {}
           });
           basketId=searchResults["basketId"];
           shippingId=searchResults.shipments[0].shipmentId;
@@ -235,7 +235,7 @@ router.get("/getBasketAPI",function(req,res,next){
 });
   
 getBasket = async() =>{
-    if(typeof basketToken !== 'undefined' || typeof basketId !== 'undefined'){
+    if(typeof basketToken !== 'undefined' && typeof basketId !== 'undefined'){
         try{
             config.headers["authorization"] = basketToken.getBearerHeader();
             const shopperClient = new Checkout.ShopperBaskets(config);
@@ -367,11 +367,10 @@ router.get("/addShippingToBasketAPI",function(req,res,next){
     addShipping(req.query.shipping,req.query.client,req.query.payment).then(now => res.send(toReturn));
 })
 
-addShipping = async(ship,user,pay) => {
+addShipping = async(ship,user) => {
     try{
         let shipping = JSON.parse(ship);
         let client = JSON.parse(user);
-        let payment = JSON.parse(pay);
         config.headers["authorization"] = basketToken.getBearerHeader();
         const shopperClient = new Checkout.ShopperBaskets(config);
         await shopperClient.updateCustomerForBasket({
@@ -382,10 +381,37 @@ addShipping = async(ship,user,pay) => {
                 email: client.email
             }
         });
-        await shopperClient.updateShippingAddressForShipment({
+        const temp = await shopperClient.addPaymentInstrumentToBasket({
+            parameters: {
+                basketId: basketId
+            },
+            body: {/*
+                paymentCard: {
+                    cardType: "Visa",
+                    holder: client.surname,
+                    maskedNumber: "*********1234",
+                    //creditCardToken: payment.card,
+                    expirationYear: parseInt(payment.year),
+                    expirationMonth: parseInt(payment.month),
+                    issueNumber: payment.cvc
+                },*/
+                paymentMethodId: "CASH_ON_DELIVERY"
+            }
+        });
+        const shipmentId = temp.shipments[0].shipmentId;
+        await shopperClient.updateShippingMethodForShipment({
             parameters: {
                 basketId: basketId,
-                shipmentId: shippingId
+                shipmentId: shipmentId
+            },
+            body: {
+                id: "default"
+            }
+        })
+        await shopperClient.updateBillingAddressForBasket({
+            parameters: {
+                basketId: basketId,
+                useAsShipping: true,
             },
             body: {
                 address1: shipping.address,
@@ -395,34 +421,35 @@ addShipping = async(ship,user,pay) => {
                 postalCode: shipping.cap,
                 stateCode: shipping.state
             }
-        });
-        /*await shopperClient.addPaymentInstrumentToBasket({
-            parameters: {
-                basketId: basketId
-            },
-            body: {
-                amount: 1,
-                paymentCard: {
-                    cardType: "Visa",
-                    holder: client.surname,
-                    maskedNumber: "*********1234",
-                    //creditCardToken: payment.card,
-                    expirationYear: parseInt(payment.year),
-                    expirationMonth: parseInt(payment.month),
-                    issueNumber: payment.cvc
-                },
-                paymentMethodId: "CREDIT_CARD"
-            }
-        });
-        const orderClient = new Checkout.ShopperOrders(config);
-        const order = await orderClient.createOrder({
-            body: {
-                basketId: basketId
-            }
-        });*/
+        })
     }catch (e){
-        console.log(e);
+        console.error(e);
+        console.error(await e.response.text());
     }//internal-try-catch
 }//updateItem
+
+//---------------SHIPPING-BASKET---------------//
+
+router.get("/checkoutAPI",function(req,res,next){
+    checkout().then(now => res.send(toReturn));
+})
+
+checkout = async() => {
+    try{
+        config.headers["authorization"] = basketToken.getBearerHeader();
+        const orderClient = new Checkout.ShopperOrders(config);
+        const basketClient = new Checkout.ShopperBaskets(config);
+        await orderClient.createOrder({
+            body: {
+                basketId: basketId
+            }
+        });
+    }catch (e){
+        console.error(e);
+        console.error(await e.response.text());
+    }//internal-try-catch
+}//checkout
+
+
 
 module.exports=router;
