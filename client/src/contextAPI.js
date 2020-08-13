@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
-const ProductContext= React.createContext();
+const ProductContext = React.createContext();
+const hostName = window.location.protocol + "//" + window.location.hostname + ":9000";
 
 export default class ProductProvider extends Component {
 
@@ -82,7 +83,7 @@ export default class ProductProvider extends Component {
 
     //getCategories
     getCategories = () => {
-        return fetch("http://localhost:9000/categoriesAPI")
+        return fetch(`${hostName}/categoriesAPI`)
         .then(res => res.json())
         .then(categories => {
             let tempCat = categories["data"].map(item => {
@@ -101,7 +102,7 @@ export default class ProductProvider extends Component {
 
     //getProducts
     getProducts = (category) => {
-        return fetch(`http://localhost:9000/categoryProductsAPI?id=${category}`)
+        return fetch(`${hostName}/categoryProductsAPI?id=${category}`)
         .then(res => res.json())
         .then(products => {
             let tempProd = products["hits"].map(item => {
@@ -134,8 +135,9 @@ export default class ProductProvider extends Component {
         .catch(error => window.location.reload(true))
     }//getProducts
 
+    //getCart
     getCart = () => {
-        return fetch("http://localhost:9000/getBasketAPI")
+        return fetch(`${hostName}/getBasketAPI`)
         .then(res => res.json())
         .then(res => {
             let arr=[];
@@ -219,9 +221,9 @@ export default class ProductProvider extends Component {
         product.inCartStatus[variation].inCart=true;
         product.inCartStatus[variation].qty=1;
         product.inCartStatus[variation].total=product.price;
-        fetch(`http://localhost:9000/addItemToBasketAPI?item=${product.compatibility[variation].id}`)
+        fetch(`${hostName}/addItemToBasketAPI?item=${product.compatibility[variation].id}`)
         let cartProduct={element: product.element,variation: product.compatibility[variation].value,variationId: variation,name: product.name, price:product.price,
-            qty: product.inCartStatus[variation].qty,total: product.inCartStatus[variation].total,images: product.images,id:product.compatibility[variation].id}
+            qty: product.inCartStatus[variation].qty,total: product.inCartStatus[variation].total,images: product.images,id:product.compatibility[variation].id,brand: product.brand}
         this.setState(() => {
             return{products: tempProducts, cart: [...this.state.cart,cartProduct]}
         },
@@ -238,7 +240,7 @@ export default class ProductProvider extends Component {
         const product = tempCart[index];
         product.qty++;
         product.total=product.qty*product.price;
-        fetch(`http://localhost:9000/updateItemToBasketAPI?item=${product.id}&tot=${product.qty}`)
+        fetch(`${hostName}/updateItemToBasketAPI?item=${product.id}&tot=${product.qty}`)
         this.setState(() => {
             return {
                 cart:[...tempCart]
@@ -255,7 +257,7 @@ export default class ProductProvider extends Component {
         const index = tempCart.indexOf(selectedProduct);
         const product = tempCart[index];
         product.qty--;
-        fetch(`http://localhost:9000/updateItemToBasketAPI?item=${product.id}&tot=${product.qty}`)
+        fetch(`${hostName}/updateItemToBasketAPI?item=${product.id}&tot=${product.qty}`)
         product.total=product.qty*product.price;
         this.setState(() => {
             return {
@@ -268,7 +270,7 @@ export default class ProductProvider extends Component {
 
     //clearCart
     clearCart = () => {
-        fetch("http://localhost:9000/clearBasketAPI")
+        fetch(`${hostName}/clearBasketAPI`)
         this.setState(() => {
             return{
                 cart:[]
@@ -285,7 +287,7 @@ export default class ProductProvider extends Component {
         const selectedCart = tempCart.find(item => item.element === id && item.variationId === variation);
         const indexCart=tempCart.indexOf(selectedCart);
         const item=tempCart[indexCart].id;
-        fetch(`http://localhost:9000/removeItemToBasketAPI?item=${item}`)
+        fetch(`${hostName}/removeItemToBasketAPI?item=${item}`)
         tempCart = tempCart.filter(item => item.element !== id || (item.element === id && item.variationId !== variation));
         const index = tempProducts.indexOf(this.getProduct(id));
         let removedProduct = tempProducts[index];
@@ -376,11 +378,19 @@ export default class ProductProvider extends Component {
         })
     }//filterProducts
 
+    buyItems = (client, shipping, payment) => {
+        let stringClient,stringShipping,stringPayment;
+        stringClient = JSON.stringify(client);
+        stringShipping = JSON.stringify(shipping);
+        stringPayment = JSON.stringify(payment);
+        fetch(`${hostName}/addShippingToBasketAPI?client=${stringClient}&shipping=${stringShipping}&payment=${stringPayment}`)
+    }
+
     render() {
         return (
             <ProductContext.Provider value={{...this.state,getProduct: this.getProduct,handleChanges: this.handleChanges,
                 resetChanges:this.resetChanges,sort:this.sort, addToCart:this.addToCart, increment:this.increment,decrement:this.decrement,
-            removeItem:this.removeItem,clearCart:this.clearCart,getDetails: this.getDetails}}>
+            removeItem:this.removeItem,clearCart:this.clearCart,buyItems: this.buyItems}}>
                 {this.props.children}
             </ProductContext.Provider>
         );

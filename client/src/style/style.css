@@ -906,10 +906,12 @@ form > * {
 .form-container form input {
   width: 100%;
   min-height: 25px;
-  border: 1px solid var(--primaryColor);
+  border-bottom: 1px solid var(--primaryColor);
+  border-top: none;
+  border-left: none;
+  border-right: none;
   font-size: 1rem;
   letter-spacing: var(--mainSpacing);
-  border-radius: 4px;
 }
 form label {
   text-transform: uppercase;
@@ -995,6 +997,7 @@ button:focus {
   border-right: none;
   border-bottom: 1px solid var(--primaryColor);
   background-color: var(--mainWhite);
+  margin-top: 0.8rem;
 }
 
 .expires select:focus{
@@ -1031,6 +1034,23 @@ button:focus {
 
 .checkout-element-price{
   text-align: right;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.errorForm{
+  text-transform: uppercase;
+  color: crimson;
+  font-size: smaller;
+  letter-spacing: var(--mainSpacing);
 }
 
 @media (max-width: 1040px) {
@@ -1092,5 +1112,10 @@ button:focus {
   input {
     margin: 5px 0;
     min-height: 30px;
+  }
+
+  .errorForm{
+    font-size: x-small;
+    letter-spacing: normal;
   }
 }

@@ -4,21 +4,22 @@ var commerceSDK=require("commerce-sdk");
 const makeFetch = require('make-fetch-happen');
 const {ClientConfig,helpers,Search,Product,Checkout}=commerceSDK;
 var toReturn;
-const clientId = "";
-const clientSecret = "";
-const realm = "";
-const instance = "";
+const clientId = "8bfe8327-a12a-4ca5-93a4-ada2ab99c6e1";
+const clientSecret = "HeadlessCommercePOC";
+const realm = "bcld";
+const instance = "s02";
 const config = {
     headers: {},
     parameters: {
-        clientId: '',
-        organizationId: '',
-        shortCode: '',
-        siteId: ''
+        clientId: '8bfe8327-a12a-4ca5-93a4-ada2ab99c6e1',
+        organizationId: 'f_ecom_bcld_s02',
+        shortCode: 'nhmagqf3',
+        siteId: 'headlessCommerce'
     }
 }
 var basketToken;
 var basketId;
+var shippingId;
 var categoriesResult;
 let categoryProductsResult
 var productDetailsResult;
@@ -207,6 +208,7 @@ createBasket = async() =>{
                 body: {},
           });
           basketId=searchResults["basketId"];
+          shippingId=searchResults.shipments[0].shipmentId;
           const det = await shopperClient.updateCustomerForBasket({
                 parameters: {
                     basketId: basketId
@@ -358,5 +360,69 @@ clearCart = async() => {
         console.log(e)
     }//internal-try-catch
 }//clearCart
+
+//---------------SHIPPING-BASKET---------------//
+
+router.get("/addShippingToBasketAPI",function(req,res,next){
+    addShipping(req.query.shipping,req.query.client,req.query.payment).then(now => res.send(toReturn));
+})
+
+addShipping = async(ship,user,pay) => {
+    try{
+        let shipping = JSON.parse(ship);
+        let client = JSON.parse(user);
+        let payment = JSON.parse(pay);
+        config.headers["authorization"] = basketToken.getBearerHeader();
+        const shopperClient = new Checkout.ShopperBaskets(config);
+        await shopperClient.updateCustomerForBasket({
+            parameters: {
+                basketId: basketId
+            },
+            body: {
+                email: client.email
+            }
+        });
+        await shopperClient.updateShippingAddressForShipment({
+            parameters: {
+                basketId: basketId,
+                shipmentId: shippingId
+            },
+            body: {
+                address1: shipping.address,
+                city: shipping.city,
+                firstName: client.name,
+                lastName: client.surname,
+                postalCode: shipping.cap,
+                stateCode: shipping.state
+            }
+        });
+        /*await shopperClient.addPaymentInstrumentToBasket({
+            parameters: {
+                basketId: basketId
+            },
+            body: {
+                amount: 1,
+                paymentCard: {
+                    cardType: "Visa",
+                    holder: client.surname,
+                    maskedNumber: "*********1234",
+                    //creditCardToken: payment.card,
+                    expirationYear: parseInt(payment.year),
+                    expirationMonth: parseInt(payment.month),
+                    issueNumber: payment.cvc
+                },
+                paymentMethodId: "CREDIT_CARD"
+            }
+        });
+        const orderClient = new Checkout.ShopperOrders(config);
+        const order = await orderClient.createOrder({
+            body: {
+                basketId: basketId
+            }
+        });*/
+    }catch (e){
+        console.log(e);
+    }//internal-try-catch
+}//updateItem
 
 module.exports=router;
