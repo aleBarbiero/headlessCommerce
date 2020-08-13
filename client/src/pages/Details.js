@@ -38,6 +38,7 @@ export default class Details extends Component {
     render() {
         const {getProduct} = this.context;
         const {addToCart} = this.context;
+        var {cartLoading} = this.context;
         const product = getProduct(this.state.element);
         if(!product){
             return <Error></Error>
@@ -80,7 +81,7 @@ export default class Details extends Component {
                             <h6>Compatibility:</h6>
                             <ul className="compatibility">
                                 {  
-                                    compatibility.map((item,index) => {
+                                    cartLoading? "" : compatibility.map((item,index) => {
                                         return <button ref={"comp".concat(index)} className="btn-primary-choice"
                                                     onClick={() => this.disableOthers(index,compatibility.length)} key={item.id}>{item.value}</button>
                                     })  

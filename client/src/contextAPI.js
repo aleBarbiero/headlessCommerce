@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 const ProductContext = React.createContext();
 const hostName = window.location.protocol + "//" + window.location.hostname + ":9000";
+const frontPort = ":3000";
 
 export default class ProductProvider extends Component {
 
@@ -21,7 +22,7 @@ export default class ProductProvider extends Component {
             brand: "all",
             price: 0,
             minPrice: 0,
-            maxPrice: 0,
+            maxPrice: 0
         };
         this.setUp();
     }
@@ -378,12 +379,24 @@ export default class ProductProvider extends Component {
         })
     }//filterProducts
 
-    buyItems = (client, shipping, payment) => {
-        let stringClient,stringShipping,stringPayment;
-        stringClient = JSON.stringify(client);
-        stringShipping = JSON.stringify(shipping);
-        stringPayment = JSON.stringify(payment);
-        fetch(`${hostName}/addShippingToBasketAPI?client=${stringClient}&shipping=${stringShipping}&payment=${stringPayment}`)
+    buyItems = (paypal,client, shipping) => {
+        if(!paypal){
+            let stringClient,stringShipping;
+            stringClient = JSON.stringify(client);
+            stringShipping = JSON.stringify(shipping);
+            fetch(`${hostName}/addShippingToBasketAPI?client=${stringClient}&shipping=${stringShipping}`)
+            .then(now => fetch(`${hostName}/checkoutAPI`))
+            .then(now => this.clearCart())
+            .then(now => window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/cart/checkout/thanks")
+        }else{
+            let stringClient,stringShipping;
+            stringClient = JSON.stringify(client);
+            stringShipping = JSON.stringify(shipping);
+            fetch(`${hostName}/addPayPalToBasketAPI?client=${stringClient}&shipping=${stringShipping}`)
+            .then(now => fetch(`${hostName}/checkoutAPI`))
+            .then(now => fetch(`${hostName}/setPaidAPI`))
+            .then(now => window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/cart/checkout/thanks")
+        }
     }
 
     render() {

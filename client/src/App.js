@@ -9,6 +9,7 @@ import {Route, Switch} from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Checkout from './components/Checkout/Checkout';
+import Thanks from './pages/Thanks'
 
 class App extends Component {
     render(){
@@ -20,6 +21,7 @@ class App extends Component {
                 <Route exact path="/list/:element" component={Details}></Route>
                 <Route exact path="/cart" component={Cart}></Route>
                 <Route exact path="/cart/checkout" component={Checkout}></Route>
+                <Route exact path="/cart/checkout/thanks" component={Thanks}></Route>
                 <Route component={Error}></Route>
             </Switch>
             <Footer></Footer>

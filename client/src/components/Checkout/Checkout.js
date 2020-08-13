@@ -7,15 +7,17 @@ import {ProductContext} from '../../contextAPI';
 import Error from '../../pages/Error';
 import Loading from '../Cart/LoadingCart';
 import {Link} from 'react-router-dom';
+import PayPal from './PayPal'
+
 
 export default class Checkout extends Component {
 
     render() {
         const {cart,cartLoading,cartTotal} = this.context;
-        const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul","Aug", "Sep", "Oct", "Nov", "Dec"];
+        /*const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul","Aug", "Sep", "Oct", "Nov", "Dec"];
         var year = [];
         for(var i=2020;i<=2030;i++)
-            year.push(i);
+            year.push(i);*/
         if(cartLoading)
             return <Loading></Loading>
         else if(cart.length === 0)
@@ -103,6 +105,14 @@ export default class Checkout extends Component {
                             <h1>
                                 <GrCreditCard className="checkout-icon"></GrCreditCard> Payment Information
                             </h1>
+                            <div className="pay-methods">
+                                <button className="btn-primary-choice" ref={0} key="pp" onClick={() => {this.disableOthers(0); this.setState({paypal: true, onDel: false})}}>Pay with PayPal</button>
+                                <button className="btn-primary-choice" ref={1} key="del" onClick={() => {this.disableOthers(1); this.setState({paypal: false, onDel: true})}}>Pay on delivery</button>
+                                <div className="errorForm">
+                                    {this.state.typeError}
+                                </div>
+                            </div>
+                            {/*}
                             <div className="cc-num">
                                 <label htmlFor="card">Credit Card Number</label>
                                 <input type="number" name="card" onChange={this.handleChanges}/>
@@ -143,6 +153,7 @@ export default class Checkout extends Component {
                                     </div>
                                 </div>
                             </div>
+                            {*/}
                         </form>
                     </div>
                 </div>   
@@ -162,6 +173,7 @@ export default class Checkout extends Component {
                             </Link>
                             <button className="btn-primary-green" onClick={() => this.buy()}>buy now</button>
                         </div>
+                        <PayPal></PayPal>
                     </div>
                 </div>
             </div>
@@ -172,6 +184,9 @@ export default class Checkout extends Component {
     constructor(){
         super();
         this.state = {
+            paypal: false,
+            onDel: false,
+            typeError: "",
             name: "",
             nameError: "",
             surname: "",
@@ -190,13 +205,13 @@ export default class Checkout extends Component {
             emailError: "",
             country: "",
             countryError: "",
-            card: "",
+            /*card: "",
             cardError: "",
             month: "",
             year: "",
             expireError: "",
             cvc: "",
-            cvcError: ""
+            cvcError: ""*/
         }
     }
 
@@ -226,10 +241,12 @@ export default class Checkout extends Component {
             state,
             country,
             cap,
-            month,
-            year,
-            cvc,
-            card
+            paypal,
+            onDel
+            //month,
+            //year,
+            //cvc,
+            //card
         } = this.state;
 
         let {
@@ -242,9 +259,9 @@ export default class Checkout extends Component {
             errState,
             errCountry,
             errCap,
-            errCVC,
-            errExpire,
-            errCard
+            //errCVC
+            //errExpire,
+            //errCard
         } = false;
 
         const mailFormat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
@@ -321,7 +338,7 @@ export default class Checkout extends Component {
             errCap=false;
         }
 
-        if(cvc.toString().length !== 3){
+        /*if(cvc.toString().length !== 3){
             this.setState({cvcError: "Invalid code"});
             errCVC=true;
         }else{
@@ -346,7 +363,12 @@ export default class Checkout extends Component {
         }else{
             this.setState({cardError: ""})
             errCard=false;
-        }
+        }*/
+
+        if(!(paypal || onDel))
+            this.setState({typeError: "Choose a payment type"});
+        else
+            this.setState({typeError: ""});
 
         return {
             errName,
@@ -358,11 +380,19 @@ export default class Checkout extends Component {
             errState,
             errCountry,
             errCap,
-            errCVC,
-            errExpire,
-            errCard
+            //errCVC,
+            //errExpire,
+            //errCard
         }
     }//checkErrors
+
+    disableOthers = (index) => {
+        this.refs[index].setAttribute("disabled","disabled")
+        if(index === 0)
+            this.refs[1].removeAttribute("disabled")
+        else
+            this.refs[0].removeAttribute("disabled")    
+    }
 
     buy = () => {
         let {
@@ -375,9 +405,9 @@ export default class Checkout extends Component {
             errState,
             errCountry,
             errCap,
-            errCVC,
-            errExpire,
-            errCard
+            //errCVC,
+            //errExpire,
+            //errCard
         } = this.checkErrors();
         let {
             name,
@@ -389,10 +419,12 @@ export default class Checkout extends Component {
             state,
             country,
             cap,
-            month,
-            year,
-            cvc,
-            card
+            paypal,
+            onDel,
+            //month,
+            //year,
+            //cvc,
+            //card
         } = this.state;
         const {buyItems} = this.context;
         let client = {
@@ -408,14 +440,14 @@ export default class Checkout extends Component {
             country,
             cap
         }
-        let payment = {
+        /*let payment = {
             card,
             cvc,
             month,
             year,
-        }
-        if(!errName && !errSurname && !errEmail && !errAdd && !errNum && !errState && !errCountry && !errCity && !errCap && !errCVC && !errCard && !errExpire){
-                buyItems(client,shipping,payment);
+        }*/
+        if(!errName && !errSurname && !errEmail && !errAdd && !errNum && !errState && !errCountry && !errCity && !errCap && (paypal || onDel)/*&& !errCVC && !errCard && !errExpire*/){   
+            buyItems(paypal,client,shipping/*,payment*/);
         }//if
     }//buy
 }
