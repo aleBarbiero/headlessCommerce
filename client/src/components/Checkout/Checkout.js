@@ -106,11 +106,8 @@ export default class Checkout extends Component {
                                 <GrCreditCard className="checkout-icon"></GrCreditCard> Payment Information
                             </h1>
                             <div className="pay-methods">
-                                <button className="btn-primary-choice" ref={0} key="pp" onClick={() => {this.disableOthers(0); this.setState({paypal: true, onDel: false})}}>Pay with PayPal</button>
-                                <button className="btn-primary-choice" ref={1} key="del" onClick={() => {this.disableOthers(1); this.setState({paypal: false, onDel: true})}}>Pay on delivery</button>
-                                <div className="errorForm">
-                                    {this.state.typeError}
-                                </div>
+                                <p>Please fill the form above only if you want to pay cash on delivery.<br/><br/>
+                                    To pay with paypal press the dedicated button.</p>
                             </div>
                             {/*}
                             <div className="cc-num">
@@ -167,12 +164,10 @@ export default class Checkout extends Component {
                         <div className="cart-checkout-total">
                             <p><strong>Total: </strong>{cartTotal}€</p>
                         </div>
-                        <div className="btns">
-                            <Link to="/cart">
-                                <button className="btn-primary-red">Back to cart</button>
-                            </Link>
-                            <button className="btn-primary-green" onClick={() => this.buy()}>buy now</button>
-                        </div>
+                        <Link to="/cart">
+                            <button className="btn-primary-red">Back to cart</button>
+                        </Link>
+                        <button className="btn-primary-green" onClick={() => this.buy()}>buy now</button>
                         <PayPal></PayPal>
                     </div>
                 </div>
@@ -184,9 +179,6 @@ export default class Checkout extends Component {
     constructor(){
         super();
         this.state = {
-            paypal: false,
-            onDel: false,
-            typeError: "",
             name: "",
             nameError: "",
             surname: "",
@@ -241,8 +233,6 @@ export default class Checkout extends Component {
             state,
             country,
             cap,
-            paypal,
-            onDel
             //month,
             //year,
             //cvc,
@@ -365,11 +355,6 @@ export default class Checkout extends Component {
             errCard=false;
         }*/
 
-        if(!(paypal || onDel))
-            this.setState({typeError: "Choose a payment type"});
-        else
-            this.setState({typeError: ""});
-
         return {
             errName,
             errSurname,
@@ -385,14 +370,6 @@ export default class Checkout extends Component {
             //errCard
         }
     }//checkErrors
-
-    disableOthers = (index) => {
-        this.refs[index].setAttribute("disabled","disabled")
-        if(index === 0)
-            this.refs[1].removeAttribute("disabled")
-        else
-            this.refs[0].removeAttribute("disabled")    
-    }
 
     buy = () => {
         let {
@@ -419,8 +396,6 @@ export default class Checkout extends Component {
             state,
             country,
             cap,
-            paypal,
-            onDel,
             //month,
             //year,
             //cvc,
@@ -446,8 +421,8 @@ export default class Checkout extends Component {
             month,
             year,
         }*/
-        if(!errName && !errSurname && !errEmail && !errAdd && !errNum && !errState && !errCountry && !errCity && !errCap && (paypal || onDel)/*&& !errCVC && !errCard && !errExpire*/){   
-            buyItems(paypal,client,shipping/*,payment*/);
+        if(!errName && !errSurname && !errEmail && !errAdd && !errNum && !errState && !errCountry && !errCity && !errCap /*&& !errCVC && !errCard && !errExpire*/){   
+            buyItems(false,client,shipping/*,payment*/);
         }//if
     }//buy
 }

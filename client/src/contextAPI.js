@@ -379,22 +379,22 @@ export default class ProductProvider extends Component {
         })
     }//filterProducts
 
-    buyItems = (paypal,client, shipping) => {
+    buyItems = (paypal,client,shipping,payment) => {
         if(!paypal){
             let stringClient,stringShipping;
             stringClient = JSON.stringify(client);
             stringShipping = JSON.stringify(shipping);
-            fetch(`${hostName}/addShippingToBasketAPI?client=${stringClient}&shipping=${stringShipping}`)
+            fetch(`${hostName}/onDeliveryAPI?client=${stringClient}&shipping=${stringShipping}`)
             .then(now => fetch(`${hostName}/checkoutAPI`))
             .then(now => this.clearCart())
             .then(now => window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/cart/checkout/thanks")
         }else{
-            let stringClient,stringShipping;
+            let stringClient,stringShipping,stringPayment;
             stringClient = JSON.stringify(client);
             stringShipping = JSON.stringify(shipping);
-            fetch(`${hostName}/addPayPalToBasketAPI?client=${stringClient}&shipping=${stringShipping}`)
+            stringPayment = JSON.stringify(payment);
+            fetch(`${hostName}/payPalAPI?client=${stringClient}&shipping=${stringShipping}&payment=${stringPayment}`)
             .then(now => fetch(`${hostName}/checkoutAPI`))
-            .then(now => fetch(`${hostName}/setPaidAPI`))
             .then(now => window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/cart/checkout/thanks")
         }
     }

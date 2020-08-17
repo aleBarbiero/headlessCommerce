@@ -1053,6 +1053,17 @@ input[type=number] {
   letter-spacing: var(--mainSpacing);
 }
 
+.form-container button{
+  width: 100%;
+  margin-left: auto;
+}
+
+.pay-methods p{
+  letter-spacing: var(--mainSpacing);
+  text-transform: uppercase;
+  font-size: medium;
+}
+
 @media (max-width: 1040px) {
   .checkout-container{
     width: 100%;

@@ -357,17 +357,17 @@ clearCart = async() => {
         })
         toReturn = await createBasket();
     }catch(e){
-        console.log(e)
+        await createBasket();
     }//internal-try-catch
 }//clearCart
 
 //---------------SHIPPING-BASKET---------------//
 
-router.get("/addShippingToBasketAPI",function(req,res,next){
-    addShipping(req.query.shipping,req.query.client,req.query.payment).then(now => res.send(toReturn));
+router.get("/onDeliveryAPI",function(req,res,next){
+    onDelivery(req.query.shipping,req.query.client).then(now => res.send(toReturn));
 })
 
-addShipping = async(ship,user) => {
+onDelivery = async(ship,user) => {
     try{
         let shipping = JSON.parse(ship);
         let client = JSON.parse(user);
@@ -385,16 +385,7 @@ addShipping = async(ship,user) => {
             parameters: {
                 basketId: basketId
             },
-            body: {/*
-                paymentCard: {
-                    cardType: "Visa",
-                    holder: client.surname,
-                    maskedNumber: "*********1234",
-                    //creditCardToken: payment.card,
-                    expirationYear: parseInt(payment.year),
-                    expirationMonth: parseInt(payment.month),
-                    issueNumber: payment.cvc
-                },*/
+            body: {
                 paymentMethodId: "CASH_ON_DELIVERY"
             }
         });
@@ -426,9 +417,9 @@ addShipping = async(ship,user) => {
         console.error(e);
         console.error(await e.response.text());
     }//internal-try-catch
-}//updateItem
+}//onDelivery
 
-//---------------SHIPPING-BASKET---------------//
+//---------------CHECKOUT-BASKET---------------//
 
 router.get("/checkoutAPI",function(req,res,next){
     checkout().then(now => res.send(toReturn));
@@ -449,6 +440,71 @@ checkout = async() => {
         console.error(await e.response.text());
     }//internal-try-catch
 }//checkout
+
+//---------------PAYPAL-BASKET---------------//
+
+router.get("/payPalAPI",function(req,res,next){
+    payPal(req.query.shipping,req.query.client,req.query.payment).then(now => res.send(toReturn));
+})
+
+payPal = async(ship,user,pay) => {
+    try{
+        let shipping = JSON.parse(ship);
+        let client = JSON.parse(user);
+        let payment = JSON.parse(pay);
+        config.headers["authorization"] = basketToken.getBearerHeader();
+        const shopperClient = new Checkout.ShopperBaskets(config);
+        await shopperClient.updateCustomerForBasket({
+            parameters: {
+                basketId: basketId
+            },
+            body: {
+                email: client.email
+            }
+        });
+        const temp = await shopperClient.addPaymentInstrumentToBasket({
+            parameters: {
+                basketId: basketId
+            },
+            body: {
+                c_transactionsHistory: payment.id,
+                paymentMethodId: "PayPal",
+                c_paypalAck: "Success",
+                c_paypalCorrelationId: payment.id,
+                c_paypalPayerID: payment.clientId,
+                c_paypalPaymentStatus: "Pending",
+                c_paypalToken: payment.token
+            }
+        });
+        const shipmentId = temp.shipments[0].shipmentId;
+        await shopperClient.updateShippingMethodForShipment({
+            parameters: {
+                basketId: basketId,
+                shipmentId: shipmentId
+            },
+            body: {
+                id: "default"
+            }
+        })
+        await shopperClient.updateBillingAddressForBasket({
+            parameters: {
+                basketId: basketId,
+                useAsShipping: true,
+            },
+            body: {
+                address1: shipping.address,
+                city: shipping.city,
+                firstName: client.name,
+                lastName: client.surname,
+                postalCode: shipping.cap,
+                stateCode: shipping.state
+            }
+        })
+    }catch (e){
+        console.error(e);
+        console.error(await e.response.text());
+    }//internal-try-catch
+}//onDelivery
 
 
 
