@@ -1,5 +1,4 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 import {TiSocialFacebook,TiSocialInstagram, TiSocialTwitter,TiSocialPinterest} from 'react-icons/ti'
 
 function Footer() {
@@ -8,24 +7,24 @@ function Footer() {
         <div className="footer">
             <div id="socialContainer">
                 <div className="socialButton">
-                    <Link to="https://www.facebook.com">
+                    <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
                         <TiSocialFacebook className="fa"></TiSocialFacebook>
-                    </Link>
+                    </a>
                 </div>
                 <div className="socialButton">
-                    <Link to="https://www.twitter.com">
+                    <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
                         <TiSocialTwitter  className="fa"></TiSocialTwitter>
-                    </Link>
+                    </a>
                 </div>
                 <div className="socialButton">
-                    <Link to="https://www.instagram.com">
+                    <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
                         <TiSocialInstagram  className="fa"></TiSocialInstagram>
-                    </Link>
+                    </a>
                 </div>
                 <div className="socialButton">
-                    <Link to="https://www.pinterest.it">
+                    <a href="https://www.pinterest.it" target="_blank" rel="noopener noreferrer">
                         <TiSocialPinterest  className="fa"></TiSocialPinterest>
-                    </Link>
+                    </a>
                 </div>
             </div>
                 <p>&copy; Alessio Barbiero | #thisIsDiana</p>

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 const ProductContext = React.createContext();
 const hostName = window.location.protocol + "//" + window.location.hostname + ":9000";
-const frontPort = ":3000";
+const frontPort = process.env.NODE_ENV === "production" ? "" : ":3000";
 
 export default class ProductProvider extends Component {
 
@@ -22,7 +22,8 @@ export default class ProductProvider extends Component {
             brand: "all",
             price: 0,
             minPrice: 0,
-            maxPrice: 0
+            maxPrice: 0,
+            limit: 4
         };
         this.setUp();
     }
@@ -203,8 +204,15 @@ export default class ProductProvider extends Component {
         let{
             products
         } = this.state;
-        this.setState({sortedProducts:products})
+        this.setState({sortedProducts:products, limit: 4})
     }//resetChanges
+
+    //setLimit
+    setLimit = event => {
+        console.log(this.state.limit)
+        this.setState({limit: this.state.limit + 4})
+        console.log(this.state.limit)
+    }
 
     //handleChanges
     handleChanges = event => {
@@ -384,7 +392,7 @@ export default class ProductProvider extends Component {
             let stringClient,stringShipping;
             stringClient = JSON.stringify(client);
             stringShipping = JSON.stringify(shipping);
-            fetch(`${hostName}/onDeliveryAPI?client=${stringClient}&shipping=${stringShipping}`)
+            fetch(`${hostName}/creditCardAPI?client=${stringClient}&shipping=${stringShipping}`)
             .then(now => fetch(`${hostName}/checkoutAPI`))
             .then(now => this.clearCart())
             .then(now => window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/cart/checkout/thanks")
@@ -395,7 +403,7 @@ export default class ProductProvider extends Component {
             stringPayment = JSON.stringify(payment);
             fetch(`${hostName}/payPalAPI?client=${stringClient}&shipping=${stringShipping}&payment=${stringPayment}`)
             .then(now => fetch(`${hostName}/checkoutAPI`))
-            .then(now => window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/cart/checkout/thanks")
+            window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/cart/checkout/thanks";
         }
     }
 
@@ -403,7 +411,7 @@ export default class ProductProvider extends Component {
         return (
             <ProductContext.Provider value={{...this.state,getProduct: this.getProduct,handleChanges: this.handleChanges,
                 resetChanges:this.resetChanges,sort:this.sort, addToCart:this.addToCart, increment:this.increment,decrement:this.decrement,
-            removeItem:this.removeItem,clearCart:this.clearCart,buyItems: this.buyItems}}>
+            removeItem:this.removeItem,clearCart:this.clearCart,buyItems: this.buyItems,setLimit: this.setLimit}}>
                 {this.props.children}
             </ProductContext.Provider>
         );

@@ -5,7 +5,7 @@ import {withProductConsumer} from '../contextAPI'
 import Loading from './Loading'
 
 function ProductContainer({context}){
-    const {loading,sortedProducts,products} = context;
+    const {loading,sortedProducts,products,limit} = context;
     if(loading){
         return <Loading></Loading>
     }
@@ -13,7 +13,7 @@ function ProductContainer({context}){
     return (
         <>
             <ProductFilter products={products}></ProductFilter>
-            <ProductList products={sortedProducts}></ProductList>
+            <ProductList sorted={sortedProducts} limit={limit}></ProductList>
         </>
     )
 }

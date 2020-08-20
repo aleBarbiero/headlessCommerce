@@ -9,7 +9,6 @@ import Loading from '../Cart/LoadingCart';
 import {Link} from 'react-router-dom';
 import PayPal from './PayPal'
 
-
 export default class Checkout extends Component {
 
     render() {
@@ -18,12 +17,11 @@ export default class Checkout extends Component {
         var year = [];
         for(var i=2020;i<=2030;i++)
             year.push(i);*/
-        if(cartLoading)
+        if(cartLoading || this.state.checkoutLoading)
             return <Loading></Loading>
         else if(cart.length === 0)
             return <Error></Error>
-        else 
-            return (
+        else return (
             <>
             <Title title="checkout"></Title>
             <div className="checkout-container">
@@ -179,6 +177,7 @@ export default class Checkout extends Component {
     constructor(){
         super();
         this.state = {
+            checkoutLoading: false,
             name: "",
             nameError: "",
             surname: "",
@@ -296,7 +295,7 @@ export default class Checkout extends Component {
             errNum=false;
         }
 
-        if(city.length < 4){
+        if(city.length < 2){
             this.setState({cityError: "Invalid city"});
             errCity=true;
         }else{
@@ -304,7 +303,7 @@ export default class Checkout extends Component {
             errCity=false;
         }
 
-        if(state.length < 3){
+        if(state.length < 2){
             this.setState({stateError: "Invalid state"});
             errState=true;
         }else{
@@ -422,6 +421,7 @@ export default class Checkout extends Component {
             year,
         }*/
         if(!errName && !errSurname && !errEmail && !errAdd && !errNum && !errState && !errCountry && !errCity && !errCap /*&& !errCVC && !errCard && !errExpire*/){   
+            this.setState({checkoutLoading: true})
             buyItems(false,client,shipping/*,payment*/);
         }//if
     }//buy

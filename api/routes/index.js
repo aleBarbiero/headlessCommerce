@@ -2,7 +2,7 @@ var express=require("express");
 var router=express.Router();
 var commerceSDK=require("commerce-sdk");
 const makeFetch = require('make-fetch-happen');
-const {ClientConfig,helpers,Search,Product,Checkout}=commerceSDK;
+const {helpers,Search,Product,Checkout}=commerceSDK;
 var toReturn;
 const clientId = "8bfe8327-a12a-4ca5-93a4-ada2ab99c6e1";
 const clientSecret = "HeadlessCommercePOC";
@@ -19,7 +19,6 @@ const config = {
 }
 var basketToken;
 var basketId;
-var shippingId;
 var categoriesResult;
 let categoryProductsResult
 var productDetailsResult;
@@ -504,8 +503,6 @@ payPal = async(ship,user,pay) => {
         console.error(e);
         console.error(await e.response.text());
     }//internal-try-catch
-}//onDelivery
-
-
+}//PayPalBasket
 
 module.exports=router;

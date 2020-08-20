@@ -1,18 +1,25 @@
 import React, { Component } from 'react'
-
 import logo from '../images/logo.png';
 import {BsChevronBarRight} from 'react-icons/bs';
-import {RiShoppingCartLine, RiUser3Line} from 'react-icons/ri'
-import {Link} from 'react-router-dom'
+import {RiShoppingCartLine, RiUser3Line} from 'react-icons/ri';
+import {Link} from 'react-router-dom';
+import {ProductContext} from '../contextAPI'
 
 export default class Navbar extends Component {
-    state={
-        isOpen:false
+    constructor(props){
+        super(props);
+        this.state={
+            isOpen:false
+        }
     }
+
+    static contextType = ProductContext;
+    
     mobileMenu = () =>{
         this.setState({isOpen:!this.state.isOpen})
     }
     render() {
+        let {cart} = this.context;
         return (
             <nav className="navbar">
                 <div className="nav-center">
@@ -43,9 +50,12 @@ export default class Navbar extends Component {
                         </li>
                         <li>
                             <Link to="/cart">
-                                <RiShoppingCartLine className="nav-last"></RiShoppingCartLine>
+                                <RiShoppingCartLine></RiShoppingCartLine>
                             </Link>
                         </li>
+                        {
+                            cart.length > 0 ? <li className="cart">({cart.length})</li> : ""
+                        }
                     </ul>
                 </div>
             </nav>

@@ -1,0 +1,13 @@
+{
+  "name": "main",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"cd api && npm run server\" \"cd client && npm start\"",
+    "install": "cd client && npm install && cd ../api && npm install",
+    "server": "node ./bin/www"
+  },
+  "dependencies": {
+    "concurrently": "^5.3.0"
+  }
+}
