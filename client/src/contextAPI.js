@@ -23,7 +23,11 @@ export default class ProductProvider extends Component {
             price: 0,
             minPrice: 0,
             maxPrice: 0,
-            limit: 4
+            limit: 4,
+            paypalLoading: false,
+            logged: false,
+            loginError: "",
+            user: null
         };
         this.setUp();
     }
@@ -387,31 +391,43 @@ export default class ProductProvider extends Component {
         })
     }//filterProducts
 
+    //buyItems
     buyItems = (paypal,client,shipping,payment) => {
         if(!paypal){
             let stringClient,stringShipping;
             stringClient = JSON.stringify(client);
             stringShipping = JSON.stringify(shipping);
-            fetch(`${hostName}/creditCardAPI?client=${stringClient}&shipping=${stringShipping}`)
+            fetch(`${hostName}/onDeliveryAPI?client=${stringClient}&shipping=${stringShipping}`)
             .then(now => fetch(`${hostName}/checkoutAPI`))
             .then(now => this.clearCart())
-            .then(now => window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/cart/checkout/thanks")
+            .then(now => window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/thanks")
         }else{
             let stringClient,stringShipping,stringPayment;
             stringClient = JSON.stringify(client);
             stringShipping = JSON.stringify(shipping);
             stringPayment = JSON.stringify(payment);
+            this.setState({paypalLoading:true})
             fetch(`${hostName}/payPalAPI?client=${stringClient}&shipping=${stringShipping}&payment=${stringPayment}`)
             .then(now => fetch(`${hostName}/checkoutAPI`))
-            window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/cart/checkout/thanks";
+            .then(now => this.clearCart())
+            .then(now => this.setState({paypalLoading:false}))
+            .then(now => window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/thanks")
         }
-    }
+    }//buyItems
+
+    //login
+    login = (user,psw) => {
+        fetch(`${hostName}/loginAPI?user=${user}&psw=${psw}`)
+        .then(res => res.json())
+        .then(res => this.setState({logged:true}))
+        .catch(res => this.setState({loginError:"Username or password invalid"}))
+    }//login
 
     render() {
         return (
             <ProductContext.Provider value={{...this.state,getProduct: this.getProduct,handleChanges: this.handleChanges,
                 resetChanges:this.resetChanges,sort:this.sort, addToCart:this.addToCart, increment:this.increment,decrement:this.decrement,
-            removeItem:this.removeItem,clearCart:this.clearCart,buyItems: this.buyItems,setLimit: this.setLimit}}>
+            removeItem:this.removeItem,clearCart:this.clearCart,buyItems: this.buyItems,setLimit: this.setLimit,login: this.login}}>
                 {this.props.children}
             </ProductContext.Provider>
         );

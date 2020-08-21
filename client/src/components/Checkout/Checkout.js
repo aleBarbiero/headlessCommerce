@@ -12,12 +12,14 @@ import PayPal from './PayPal'
 export default class Checkout extends Component {
 
     render() {
-        const {cart,cartLoading,cartTotal} = this.context;
+        const {cart,cartTotal} = this.context;
+        let {paypalLoading,cartLoading} = this.context;
         /*const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul","Aug", "Sep", "Oct", "Nov", "Dec"];
         var year = [];
         for(var i=2020;i<=2030;i++)
             year.push(i);*/
-        if(cartLoading || this.state.checkoutLoading)
+            console.log(paypalLoading);
+        if(cartLoading || this.state.checkoutLoading || paypalLoading)
             return <Loading></Loading>
         else if(cart.length === 0)
             return <Error></Error>

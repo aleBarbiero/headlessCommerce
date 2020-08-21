@@ -10,7 +10,7 @@ export default function CartItem({item,value}) {
     return (
         <div className="flex-row">
             <div className="flex-col-img">
-                <Link to={`/list/${element}`}>
+                <Link to={`/${element}`}>
                     <img src={images[0]} alt={name} className="thumb-img"></img>
                 </Link>
             </div>

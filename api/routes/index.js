@@ -1,8 +1,12 @@
-var express=require("express");
-var router=express.Router();
-var commerceSDK=require("commerce-sdk");
+var express = require("express");
+var router = express.Router();
+var commerceSDK = require("commerce-sdk");
 const makeFetch = require('make-fetch-happen');
-const {helpers,Search,Product,Checkout}=commerceSDK;
+const path = require('path');
+
+const dirPath = "/home/alessio_barbiero/headlessCommerce/client"
+
+const {helpers,Search,Product,Checkout,Customer} = commerceSDK;
 var toReturn;
 const clientId = "8bfe8327-a12a-4ca5-93a4-ada2ab99c6e1";
 const clientSecret = "HeadlessCommercePOC";
@@ -11,8 +15,8 @@ const instance = "s02";
 const config = {
     headers: {},
     parameters: {
-        clientId: '8bfe8327-a12a-4ca5-93a4-ada2ab99c6e1',
-        organizationId: 'f_ecom_bcld_s02',
+        clientId: clientId,
+        organizationId: `f_ecom_${realm}_${instance}`,
         shortCode: 'nhmagqf3',
         siteId: 'headlessCommerce'
     }
@@ -20,7 +24,7 @@ const config = {
 var basketToken;
 var basketId;
 var categoriesResult;
-let categoryProductsResult
+var categoryProductsResult
 var productDetailsResult;
 var searchResult;
 var cartResponse;
@@ -428,16 +432,41 @@ checkout = async() => {
     try{
         config.headers["authorization"] = basketToken.getBearerHeader();
         const orderClient = new Checkout.ShopperOrders(config);
-        const basketClient = new Checkout.ShopperBaskets(config);
-        await orderClient.createOrder({
+        let result = await orderClient.createOrder({
             body: {
                 basketId: basketId
             }
         });
+        const token = await getAuthToken("sfcc.orders.rw");
+        if (!!!token)
+            return;
+        const orderStatusClient = new Checkout.Orders(config);
+        await orderStatusClient.updateOrderStatus({
+            headers: {
+                authorization: `Bearer ${token}`
+            },
+            parameters: {
+                orderNo: result.orderNo
+            },
+            body: {
+                status: "new"
+            }
+        });
+        await orderStatusClient.updateOrderConfirmationStatus({
+            headers: {
+                authorization: `Bearer ${token}`
+            },
+            parameters: {
+                orderNo: result.orderNo
+            },
+            body: {
+                status: "confirmed"
+            }
+        })
     }catch (e){
         console.error(e);
         console.error(await e.response.text());
-    }//internal-try-catch
+    }//internal-try-catch*/
 }//checkout
 
 //---------------PAYPAL-BASKET---------------//
@@ -503,6 +532,34 @@ payPal = async(ship,user,pay) => {
         console.error(e);
         console.error(await e.response.text());
     }//internal-try-catch
-}//PayPalBasket
+}//PayPal
+
+router.get("/loginAPI",function(req,res,next){
+    login(req.query.user,req.query.psw).then(now => res.send(toReturn));
+})
+
+login = async(user,psw) => {
+    try{
+        let credentials = `${user}:${psw}`;
+        let buff = Buffer.from(credentials);
+        let base64data = buff.toString('base64');
+        const userClient = new Customer.ShopperCustomers(config);
+        const res = await userClient.authorizeCustomer({
+            headers: {
+                authorization: `Basic ${base64data}`
+            },
+            body: {
+                type: "credentials"
+            }
+        });
+        toReturn=res;
+    }catch(e){
+        toReturn=null;
+    }//try_catch
+}//login
+
+router.get('/*',function(req,res,next) {
+    res.sendFile(path.resolve(dirPath, "build/index.html"))
+})
 
 module.exports=router;

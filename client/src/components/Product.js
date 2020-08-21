@@ -13,7 +13,7 @@ export default function Product({product}) {
                     <h6>{price}€</h6>
                     <p>tax included</p>
                 </div>
-                <Link to={`/list/${element}`} className="btn-primary product-link">view more</Link>
+                <Link to={`/${element}`} className="btn-primary product-link">view more</Link>
             </div>
             <div className="product-info">
                 <p>{name}</p>

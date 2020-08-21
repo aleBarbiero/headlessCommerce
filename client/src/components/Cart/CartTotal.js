@@ -12,7 +12,7 @@ export default function CartTotal({value}) {
                     <div className="flex-column">
                         <button className="btn-primary-red" onClick={() => {clearCart()}}>
                             clear cart
-                        </button><Link to="/cart/checkout" >
+                        </button><Link to="/checkout" >
                         <button className="btn-primary-green">
                             buy now
                         </button></Link>

@@ -5,6 +5,7 @@ import {Link} from 'react-router-dom'
 import {ProductContext} from '../contextAPI'
 import StyledBanner from '../components/StyledBanner'
 import Error from './Error'
+import Loading from '../components/Cart/LoadingCart'
 
 export default class Details extends Component {
 
@@ -39,7 +40,10 @@ export default class Details extends Component {
         const {getProduct} = this.context;
         const {addToCart} = this.context;
         var {cartLoading} = this.context;
+        let {loading} = this.context;
         const product = getProduct(this.state.element);
+        if(loading)
+            return <Loading></Loading>
         if(!product){
             return <Error></Error>
         }

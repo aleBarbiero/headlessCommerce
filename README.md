@@ -22,7 +22,7 @@ $ cd client
 $ npm run build
 ```
 
-ed avvia il server per il bak-end
+ed avvia il server per il back-end.
 
 ```sh
 $ cd api
