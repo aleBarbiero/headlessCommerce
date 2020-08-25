@@ -44,11 +44,11 @@ export default class User extends Component {
     }//validate
 
     render() {
-        let {logged,loginError} = this.context;
+        let {logged,loginError,user} = this.context;
         if(!logged)
             return(
                 <>
-                    <Title title="user page"></Title>
+                    <Title title="Login"></Title>
                     <div className="checkout-container">
                         <div className="form-wrapper">
                             <div className="form-container">
@@ -85,7 +85,25 @@ export default class User extends Component {
             )
         else
             return (
-                <Title title="You're logged!"></Title>
+                <>
+                    <Title title={user.username}></Title>
+                    <div className="checkout-container">
+                        <div className="form-wrapper">
+                            <div className="form-container">
+                                <form action="">
+                                    <label htmlFor="name">Name</label>
+                                    <input type="text" name="name" value={user.name} disabled={true}></input>
+                                    <label htmlFor="surname">Surname</label>
+                                    <input type="text" name="surname" value={user.surname} disabled={true}></input>
+                                    <label htmlFor="email">Email</label>
+                                    <input type="text" name="email" value={user.email} disabled={true}></input>
+                                    <label htmlFor="username">Username</label>
+                                    <input type="text" name="username" value={user.username} disabled={true}></input>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </>
             )
     }
 }

@@ -54,7 +54,7 @@ export default function ProductsFilter({products}) {
 
     return(
         <section className="filter-container">
-            <Title title="search products"></Title>
+            <Title title="Search products"></Title>
                 <form className="filter-form">
                     {/*type*/}
                     <div className="form-group">

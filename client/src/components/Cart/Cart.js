@@ -24,7 +24,7 @@ export default class Cart extends Component {
                         else if(cart.length>0)
                             return(
                                 <>
-                                    <Title title="your cart"></Title>
+                                    <Title title="Your cart"></Title>
                                     <CartColumns></CartColumns>
                                     <CartList value={value}></CartList>
                                     <CartTotal value={value}></CartTotal>

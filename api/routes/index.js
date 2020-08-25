@@ -160,10 +160,10 @@ const getCategories = async () => {
 //---------------CATEGORY-PRODUCTS---------------//
 
 router.get("/categoryProductsAPI",function(req,res,next){
-  getCategoryProducts(req.query.id, res).then(now => res.send(categoryProductsResult));
+  getCategoryProducts(req.query.id).then(now => res.send(categoryProductsResult));
 });
 
-const getCategoryProducts = async (id,res) => {
+const getCategoryProducts = async (id) => {
     try{
         const token = await getAuthToken("sfcc.catalogs");
         if (!!!token)

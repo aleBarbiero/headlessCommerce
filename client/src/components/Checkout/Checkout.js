@@ -12,20 +12,15 @@ import PayPal from './PayPal'
 export default class Checkout extends Component {
 
     render() {
-        const {cart,cartTotal} = this.context;
+        const {cart,cartTotal,user,logged} = this.context;
         let {paypalLoading,cartLoading} = this.context;
-        /*const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul","Aug", "Sep", "Oct", "Nov", "Dec"];
-        var year = [];
-        for(var i=2020;i<=2030;i++)
-            year.push(i);*/
-            console.log(paypalLoading);
         if(cartLoading || this.state.checkoutLoading || paypalLoading)
             return <Loading></Loading>
         else if(cart.length === 0)
             return <Error></Error>
         else return (
             <>
-            <Title title="checkout"></Title>
+            <Title title="Checkout"></Title>
             <div className="checkout-container">
                 <div className="form-wrapper">
                     <div className="form-container">
@@ -36,14 +31,14 @@ export default class Checkout extends Component {
                             <div className="name">
                                 <div>
                                     <label htmlFor="name">name</label>
-                                    <input type="text" name="name" onChange={this.handleChanges}/>
+                                    <input type="text" name="name" onChange={this.handleChanges}  value={logged ? user.name : this.state.name}/>
                                     <div className="errorForm">
                                         {this.state.nameError}
                                     </div>
                                 </div>
                                 <div>
                                     <label htmlFor="surname">surname</label>
-                                    <input type="text" name="surname" onChange={this.handleChanges}/>
+                                    <input type="text" name="surname" onChange={this.handleChanges} value={logged ? user.surname : this.state.surname}/>
                                     <div className="errorForm">
                                         {this.state.surnameError}
                                     </div>
@@ -51,7 +46,7 @@ export default class Checkout extends Component {
                             </div>
                             <div className="email">
                                 <label htmlFor="email">e-mail</label> 
-                                <input type="email" name="email" onChange={this.handleChanges}/>
+                                <input type="email" name="email" onChange={this.handleChanges} value={logged ? user.email : this.state.email}/>
                                 <div className="errorForm">
                                     {this.state.emailError}
                                 </div>
@@ -109,48 +104,6 @@ export default class Checkout extends Component {
                                 <p>Please fill the form above only if you want to pay cash on delivery.<br/><br/>
                                     To pay with paypal press the dedicated button.</p>
                             </div>
-                            {/*}
-                            <div className="cc-num">
-                                <label htmlFor="card">Credit Card Number</label>
-                                <input type="number" name="card" onChange={this.handleChanges}/>
-                                <div className="errorForm">
-                                        {this.state.cardError}
-                                    </div>
-                            </div>
-                            <div className="cc-info">
-                                <div className="expires">
-                                    <label htmlFor="expires">Expires</label>
-                                    <div className="selects">
-                                        <select name="month" onChange={this.handleChanges}>
-                                            <option value="0" key="month">Month</option>
-                                            {
-                                                month.map((item,index) => {
-                                                    return <option value={index+1} key={item}>{item}</option>
-                                                })
-                                            }
-                                        </select>
-                                        <select name="year" onChange={this.handleChanges}>
-                                            <option value="0" key="year">Year</option>
-                                            {
-                                                year.map((item) => {
-                                                    return <option value={item} key={item}>{item}</option>
-                                                })
-                                            }
-                                        </select>
-                                    </div>
-                                    <div className="errorForm">
-                                        {this.state.expireError}
-                                    </div>
-                                </div>
-                                <div>
-                                    <label htmlFor="cvc">CVC</label>
-                                    <input type="number" name="cvc" onChange={this.handleChanges}/>
-                                    <div className="errorForm">
-                                        {this.state.cvcError}
-                                    </div>
-                                </div>
-                            </div>
-                            {*/}
                         </form>
                     </div>
                 </div>   
@@ -197,14 +150,7 @@ export default class Checkout extends Component {
             email: "",
             emailError: "",
             country: "",
-            countryError: "",
-            /*card: "",
-            cardError: "",
-            month: "",
-            year: "",
-            expireError: "",
-            cvc: "",
-            cvcError: ""*/
+            countryError: ""
         }
     }
 
@@ -212,6 +158,10 @@ export default class Checkout extends Component {
 
     componentDidMount(){
         window.scrollTo(0,0);
+        let {logged,user} =  this.context;
+        if(logged){
+            this.setState({name: user.name,surname: user.surname, email: user.email})
+        }
     }
 
     handleChanges = event => {
@@ -233,11 +183,7 @@ export default class Checkout extends Component {
             city,
             state,
             country,
-            cap,
-            //month,
-            //year,
-            //cvc,
-            //card
+            cap
         } = this.state;
 
         let {
@@ -249,10 +195,7 @@ export default class Checkout extends Component {
             errCity,
             errState,
             errCountry,
-            errCap,
-            //errCVC
-            //errExpire,
-            //errCard
+            errCap
         } = false;
 
         const mailFormat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
@@ -329,33 +272,6 @@ export default class Checkout extends Component {
             errCap=false;
         }
 
-        /*if(cvc.toString().length !== 3){
-            this.setState({cvcError: "Invalid code"});
-            errCVC=true;
-        }else{
-            this.setState({cvcError: ""});
-            errCVC=false;
-        }
-
-        var date = new Date(year,month);
-        var today = new Date();
-
-        if(date < today){
-            this.setState({expireError: "Invalid date"})
-            errExpire=true
-        }else{
-            this.setState({expireError: ""});
-            errExpire=false;
-        }
-
-        if(card.length !== 16){
-            this.setState({cardError:"Invalid card number"});
-            errCard=true
-        }else{
-            this.setState({cardError: ""})
-            errCard=false;
-        }*/
-
         return {
             errName,
             errSurname,
@@ -365,10 +281,7 @@ export default class Checkout extends Component {
             errCity,
             errState,
             errCountry,
-            errCap,
-            //errCVC,
-            //errExpire,
-            //errCard
+            errCap
         }
     }//checkErrors
 
@@ -382,10 +295,7 @@ export default class Checkout extends Component {
             errCity,
             errState,
             errCountry,
-            errCap,
-            //errCVC,
-            //errExpire,
-            //errCard
+            errCap
         } = this.checkErrors();
         let {
             name,
@@ -396,11 +306,7 @@ export default class Checkout extends Component {
             city,
             state,
             country,
-            cap,
-            //month,
-            //year,
-            //cvc,
-            //card
+            cap
         } = this.state;
         const {buyItems} = this.context;
         let client = {
@@ -416,15 +322,9 @@ export default class Checkout extends Component {
             country,
             cap
         }
-        /*let payment = {
-            card,
-            cvc,
-            month,
-            year,
-        }*/
-        if(!errName && !errSurname && !errEmail && !errAdd && !errNum && !errState && !errCountry && !errCity && !errCap /*&& !errCVC && !errCard && !errExpire*/){   
+        if(!errName && !errSurname && !errEmail && !errAdd && !errNum && !errState && !errCountry && !errCity && !errCap){   
             this.setState({checkoutLoading: true})
-            buyItems(false,client,shipping/*,payment*/);
+            buyItems(false,client,shipping);
         }//if
     }//buy
 }

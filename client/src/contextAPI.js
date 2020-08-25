@@ -419,7 +419,15 @@ export default class ProductProvider extends Component {
     login = (user,psw) => {
         fetch(`${hostName}/loginAPI?user=${user}&psw=${psw}`)
         .then(res => res.json())
-        .then(res => this.setState({logged:true}))
+        .then(res => this.setState({
+            logged:true,
+            user:{
+                name: res.firstName,
+                surname: res.lastName,
+                email: res.email,
+                username: res.login
+            }
+        }))
         .catch(res => this.setState({loginError:"Username or password invalid"}))
     }//login
 
