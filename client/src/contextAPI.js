@@ -393,6 +393,8 @@ export default class ProductProvider extends Component {
 
     //buyItems
     buyItems = (paypal,client,shipping,payment) => {
+        if(this.state.logged)
+            client.customerNum = this.state.user.customerNum;
         if(!paypal){
             let stringClient,stringShipping;
             stringClient = JSON.stringify(client);
@@ -425,17 +427,32 @@ export default class ProductProvider extends Component {
                 name: res.firstName,
                 surname: res.lastName,
                 email: res.email,
-                username: res.login
+                username: res.login,
+                customerNum: res.customerNo,
+                address: {
+                    address: res.addresses[0].address1,
+                    city: res.addresses[0].city,
+                    country: res.addresses[0].countryCode,
+                    state: res.addresses[0].stateCode,
+                    number: res.addresses[0].suite,
+                    cap: res.addresses[0].postalCode
+                }
             }
         }))
         .catch(res => this.setState({loginError:"Username or password invalid"}))
     }//login
 
+    //logout
+    logout = () => {
+        fetch(`${hostName}/logoutAPI`)
+        .then(this.setState({logged: false, user: null}))
+    }
+
     render() {
         return (
             <ProductContext.Provider value={{...this.state,getProduct: this.getProduct,handleChanges: this.handleChanges,
                 resetChanges:this.resetChanges,sort:this.sort, addToCart:this.addToCart, increment:this.increment,decrement:this.decrement,
-            removeItem:this.removeItem,clearCart:this.clearCart,buyItems: this.buyItems,setLimit: this.setLimit,login: this.login}}>
+            removeItem:this.removeItem,clearCart:this.clearCart,buyItems: this.buyItems,setLimit: this.setLimit,login: this.login,logout: this.logout}}>
                 {this.props.children}
             </ProductContext.Provider>
         );

@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 
+api/routes/dist
 api/node_modules
 api/package-lock.json
 client/node_modules

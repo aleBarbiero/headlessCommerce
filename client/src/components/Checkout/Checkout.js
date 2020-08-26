@@ -54,21 +54,21 @@ export default class Checkout extends Component {
                             <div className="address-info-street">
                                 <div className="country">
                                     <label htmlFor="country">country</label>
-                                    <input type="text" name="country" onChange={this.handleChanges}/>
+                                    <input type="text" name="country" onChange={this.handleChanges} value={logged ? user.address.country : this.state.country}/>
                                     <div className="errorForm">
                                         {this.state.countryError}
                                     </div>
                                 </div>
                                 <div className="address">
                                     <label htmlFor="name">address</label>
-                                    <input type="text" name="address" onChange={this.handleChanges}/>
+                                    <input type="text" name="address" onChange={this.handleChanges} value={logged ? user.address.address : this.state.address}/>
                                     <div className="errorForm">
                                         {this.state.addressError}
                                     </div>
                                 </div>
                                 <div className="number">
                                     <label htmlFor="number">n.</label>
-                                    <input type="text" name="number" onChange={this.handleChanges}/>
+                                    <input type="text" name="number" onChange={this.handleChanges} value={logged ? user.address.number : this.state.number}/>
                                     <div className="errorForm">
                                         {this.state.numberError}
                                     </div>
@@ -77,21 +77,21 @@ export default class Checkout extends Component {
                             <div className="address-info">
                                 <div>
                                     <label htmlFor="city">City</label>
-                                    <input type="text" name="city" onChange={this.handleChanges}/>
+                                    <input type="text" name="city" onChange={this.handleChanges} value={logged ? user.address.city : this.state.city}/>
                                     <div className="errorForm">
                                         {this.state.cityError}
                                     </div>
                                 </div>
                                 <div>
                                     <label htmlFor="state">State</label>
-                                    <input type="text" name="state" onChange={this.handleChanges}/>
+                                    <input type="text" name="state" onChange={this.handleChanges} value={logged ? user.address.state : this.state.state}/>
                                     <div className="errorForm">
                                         {this.state.stateError}
                                     </div>
                                 </div>
                                 <div>
                                     <label htmlFor="cap">CAP</label>
-                                    <input type="number" name="cap" onChange={this.handleChanges}/>
+                                    <input type="number" name="cap" onChange={this.handleChanges} value={logged ? user.address.cap : this.state.cap}/>
                                     <div className="errorForm">
                                         {this.state.capError}
                                     </div>
@@ -160,7 +160,17 @@ export default class Checkout extends Component {
         window.scrollTo(0,0);
         let {logged,user} =  this.context;
         if(logged){
-            this.setState({name: user.name,surname: user.surname, email: user.email})
+            this.setState({
+                name: user.name,
+                surname: user.surname,
+                email: user.email,
+                address: user.address.address,
+                number: user.address.number,
+                city: user.address.city,
+                country: user.address.country,
+                state: user.address.state,
+                cap: user.address.cap,
+                })
         }
     }
 
@@ -256,7 +266,7 @@ export default class Checkout extends Component {
             errState=false;
         }
 
-        if(country.length < 4){
+        if(country.length === 1){
             this.setState({countryError: "Invalid country"});
             errCountry=true;
         }else{

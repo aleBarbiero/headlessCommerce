@@ -28,6 +28,7 @@ var categoryProductsResult
 var productDetailsResult;
 var searchResult;
 var cartResponse;
+var customId=null;
 
 async function getAuthToken(scope){
   let credentials = `${clientId}:${clientSecret}`;
@@ -544,7 +545,7 @@ login = async(user,psw) => {
         let buff = Buffer.from(credentials);
         let base64data = buff.toString('base64');
         const userClient = new Customer.ShopperCustomers(config);
-        const res = await userClient.authorizeCustomer({
+        let customerRes = await userClient.authorizeCustomer({
             headers: {
                 authorization: `Basic ${base64data}`
             },
@@ -552,11 +553,34 @@ login = async(user,psw) => {
                 type: "credentials"
             }
         });
-        toReturn=res;
+        customId=customerRes.customerId;
+        customerRes = await userClient.authorizeCustomer({
+            headers: {
+                authorization: `Basic ${base64data}`
+            },
+            body: {
+                type: "credentials"
+            }
+        },true)
+        config.headers["authorization"] = await customerRes.headers.get("authorization");
+        const userDetailsClient = new Customer.ShopperCustomers(config);
+        const details = await userDetailsClient.getCustomer({
+            parameters: {
+                customerId: customId
+            }
+        });
+        toReturn=details;
     }catch(e){
+        console.log(e);
+        console.log(await e.response.text())
         toReturn=null;
     }//try_catch
 }//login
+
+router.get("/logoutAPI",function(req,res,next){
+    customId=null;
+    res.send()
+})
 
 router.get('/*',function(req,res,next) {
     res.sendFile(path.resolve(dirPath, "build/index.html"))
