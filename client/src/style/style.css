@@ -467,6 +467,47 @@ h6 {
   grid-column-gap: 2rem;
   grid-row-gap: 1rem;
 }
+
+.wish{
+  display: inline-block;
+  text-decoration: none;
+  letter-spacing: var(--mainSpacing);
+  margin-left: 2rem;
+  color: var(--mainWhite);
+  background: var(--mainBlack);
+  padding: 0.4rem 0.9rem;
+  border: 3px solid var(--mainBlack);
+  transition: var(--mainTransition);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.wish:hover {
+    background: transparent;
+    color: var(--mainBlack);
+}
+.wish:disabled{
+  cursor: initial;
+  background: transparent;
+  color: var(--mainBlack);
+}
+.wish-remove{
+  background: transparent;
+  color: var(--mainBlack);
+  display: inline-block;
+  text-decoration: none;
+  letter-spacing: var(--mainSpacing);
+  margin-left: 2rem;
+  padding: 0.4rem 0.9rem;
+  border: 3px solid var(--mainBlack);
+  transition: var(--mainTransition);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.wish-remove:hover{
+  background: var(--mainBlack);
+  color: var(--mainWhite)
+}
+
 @media screen and (min-width: 992px) {
   .single-product-images,
   .single-product-info,
@@ -1165,4 +1206,21 @@ input[type=number] {
 .login-button{
   width: 10rem;
   float: right;
+}
+
+.login label{
+  padding-top: 1rem;
+  display: block
+}
+
+@media screen and (max-width: 1500px){
+  .login-button{
+    margin-bottom: 1rem;
+  }
+}
+
+@media screen and (max-width: 1040px){
+  .login div{
+    align-items: center;
+  }
 }

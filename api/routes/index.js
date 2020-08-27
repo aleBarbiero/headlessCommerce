@@ -3,6 +3,7 @@ var router = express.Router();
 var commerceSDK = require("commerce-sdk");
 const makeFetch = require('make-fetch-happen');
 const path = require('path');
+const e = require("express");
 
 const dirPath = "/home/alessio_barbiero/headlessCommerce/client"
 
@@ -29,6 +30,7 @@ var productDetailsResult;
 var searchResult;
 var cartResponse;
 var customId=null;
+var userToken=null;
 
 async function getAuthToken(scope){
   let credentials = `${clientId}:${clientSecret}`;
@@ -536,18 +538,15 @@ payPal = async(ship,user,pay) => {
 }//PayPal
 
 router.get("/loginAPI",function(req,res,next){
-    login(req.query.user,req.query.psw).then(now => res.send(toReturn));
+    login(req.query.user).then(now => res.send(toReturn));
 })
 
-login = async(user,psw) => {
+login = async(user) => {
     try{
-        let credentials = `${user}:${psw}`;
-        let buff = Buffer.from(credentials);
-        let base64data = buff.toString('base64');
         const userClient = new Customer.ShopperCustomers(config);
         let customerRes = await userClient.authorizeCustomer({
             headers: {
-                authorization: `Basic ${base64data}`
+                authorization: `Basic ${user}`
             },
             body: {
                 type: "credentials"
@@ -556,20 +555,27 @@ login = async(user,psw) => {
         customId=customerRes.customerId;
         customerRes = await userClient.authorizeCustomer({
             headers: {
-                authorization: `Basic ${base64data}`
+                authorization: `Basic ${user}`
             },
             body: {
                 type: "credentials"
             }
         },true)
-        config.headers["authorization"] = await customerRes.headers.get("authorization");
+        userToken = await customerRes.headers.get("authorization");
+        config.headers["authorization"] = userToken;
         const userDetailsClient = new Customer.ShopperCustomers(config);
+        const list = await userDetailsClient.getCustomerProductLists({
+            parameters: {
+                customerId: customId
+            }
+        })
         const details = await userDetailsClient.getCustomer({
             parameters: {
                 customerId: customId
             }
         });
-        toReturn=details;
+        const userObj = {list: list, user: details}
+        toReturn=userObj;
     }catch(e){
         console.log(e);
         console.log(await e.response.text())
@@ -578,9 +584,96 @@ login = async(user,psw) => {
 }//login
 
 router.get("/logoutAPI",function(req,res,next){
-    customId=null;
+    customId=null,userToken=null;
     res.send()
+})//logout
+
+router.get("/signinAPI",function(req,res,next){
+    signIn(req.query.user,req.query.address).then(now => res.send(toReturn));
 })
+
+signIn = async(client,address) => {
+    try{
+        let user = JSON.parse(client);
+        const num = Math.random().toString().slice(2,10);
+        let token = await getAuthToken("sfcc.customerlists.rw ");
+        if (!!!token)
+            return;
+        const signInClient = new Customer.Customers(config);
+        await signInClient.createCustomerInCustomerList({
+            headers:{
+                authorization: `Bearer ${token}`
+            },
+            parameters: {
+                customerNo: num,
+                listId: "headlessCommerce"
+            },
+            body: {
+                credentials:{
+                    enabled: true,
+                    login: user.username
+                },
+                customerNo: num,
+                email: user.email,
+                firstName: user.name,
+                lastName: user.surname,
+
+            }
+        })
+        /*
+        config.headers["authorization"] = token.getBearerHeader();
+        console.log(config);
+        const pswClient = new Customer.ShopperCustomers(config);
+        const resetToken = pswClient.getResetPasswordToken({
+            body: {
+                login: user.username
+            }
+        })
+        /*await pswClient.resetPassword({
+            body: {
+                login: user.username,
+                newPassword: user.psw,
+                resetToken: resetToken
+            }
+        })*/
+    }catch(e){
+        console.log(e);
+        console.log(await e.response.text());
+        /*await e.response.json().then(now => {
+            if(now.title.toUpperCase() === "LOGIN ALREADY IN USE")
+                toReturn=null;
+            else
+                signIn(client,address);
+        })*/
+    }//try_catch
+}//signIn
+
+router.get("/addToWishlistAPI",function(req,res,next){
+    addToWishlist(req.query.item,req.query.list).then(now => res.send(toReturn))
+})
+
+addToWishlist = async(item,list) => {
+    try{
+        config.headers["authorization"] = userToken;
+        const wishClient = new Customer.ShopperCustomers(config);
+        await wishClient.createCustomerProductListItem({
+            parameters: {
+                customerId: customId,
+                listId: list
+            },
+            body: {
+                priority: 1,
+                productId: item,
+                type: "product",
+                quantity: 1,
+                public: true
+            }
+        })
+    }catch(e){
+        console.log(e),
+        console.log(await e.response.text());
+    }
+}
 
 router.get('/*',function(req,res,next) {
     res.sendFile(path.resolve(dirPath, "build/index.html"))

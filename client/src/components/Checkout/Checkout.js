@@ -7,13 +7,16 @@ import {ProductContext} from '../../contextAPI';
 import Error from '../../pages/Error';
 import Loading from '../Cart/LoadingCart';
 import {Link} from 'react-router-dom';
-import PayPal from './PayPal'
+import PayPal from './PayPal';
+import Thanks from '../../pages/Thanks';
 
 export default class Checkout extends Component {
 
     render() {
-        const {cart,cartTotal,user,logged} = this.context;
+        const {cart,cartTotal,user,logged,buyed} = this.context;
         let {paypalLoading,cartLoading} = this.context;
+        if(buyed)
+            return <Thanks></Thanks>
         if(cartLoading || this.state.checkoutLoading || paypalLoading)
             return <Loading></Loading>
         else if(cart.length === 0)
@@ -266,7 +269,7 @@ export default class Checkout extends Component {
             errState=false;
         }
 
-        if(country.length === 1){
+        if(country.length <= 1){
             this.setState({countryError: "Invalid country"});
             errCountry=true;
         }else{

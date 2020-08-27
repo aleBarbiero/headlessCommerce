@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 const ProductContext = React.createContext();
 const hostName = window.location.protocol + "//" + window.location.hostname + ":9000";
-const frontPort = process.env.NODE_ENV === "production" ? "" : ":3000";
+//const frontPort = process.env.NODE_ENV === "production" ? "" : ":3000";
 
 export default class ProductProvider extends Component {
 
@@ -27,7 +27,9 @@ export default class ProductProvider extends Component {
             paypalLoading: false,
             logged: false,
             loginError: "",
-            user: null
+            user: null,
+            buyed: false,
+            loginLoading: false
         };
         this.setUp();
     }
@@ -38,7 +40,6 @@ export default class ProductProvider extends Component {
         .then(res => this.setState({categories: res}))
         .then(res => {
             this.setState({categories: this.clean(this.state.categories)});
-            console.log(this.state.categories)
         })
         /*products*/
         .then(res => {
@@ -49,7 +50,6 @@ export default class ProductProvider extends Component {
                 .then(res => {
                     if(index===temp.length-1){
                         let products=this.state.products;
-                        console.log(products)
                         let tempSorted=products.sort((a, b) => (a.price > b.price) ? 1 : -1);
                         let onesToWatch=[tempSorted[0], tempSorted[1], tempSorted[2]];
                         let minPrice=Math.min(...products.map(item => item.price));
@@ -69,7 +69,8 @@ export default class ProductProvider extends Component {
                                 this.setState(() => {
                                     return {
                                         cart:res,
-                                        cartLoading:false
+                                        cartLoading:false,
+                                        buyed: false
                                     }
                                 },() => this.addTotals());
                             }
@@ -129,7 +130,7 @@ export default class ProductProvider extends Component {
                     }
                     let inCartStatus=[];
                     compatibility.map((item,index) => {
-                        return inCartStatus[index]={qty:0,inCart:false,total:0}
+                        return inCartStatus[index]={qty:0,inCart:false,total:0,inWish:false}
                     })
                     let product={id,type,name,price,element,brand,images,inStock,extra,desc,compatibility,inCartStatus};
                     return product;
@@ -213,9 +214,7 @@ export default class ProductProvider extends Component {
 
     //setLimit
     setLimit = event => {
-        console.log(this.state.limit)
         this.setState({limit: this.state.limit + 4})
-        console.log(this.state.limit)
     }
 
     //handleChanges
@@ -238,7 +237,7 @@ export default class ProductProvider extends Component {
         let cartProduct={element: product.element,variation: product.compatibility[variation].value,variationId: variation,name: product.name, price:product.price,
             qty: product.inCartStatus[variation].qty,total: product.inCartStatus[variation].total,images: product.images,id:product.compatibility[variation].id,brand: product.brand}
         this.setState(() => {
-            return{products: tempProducts, cart: [...this.state.cart,cartProduct]}
+            return{products: tempProducts, cart: [...this.state.cart,cartProduct],buyed: false}
         },
         () => {
             this.addTotals();
@@ -402,7 +401,7 @@ export default class ProductProvider extends Component {
             fetch(`${hostName}/onDeliveryAPI?client=${stringClient}&shipping=${stringShipping}`)
             .then(now => fetch(`${hostName}/checkoutAPI`))
             .then(now => this.clearCart())
-            .then(now => window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/thanks")
+            .then(now => this.setState({buyed : true}))
         }else{
             let stringClient,stringShipping,stringPayment;
             stringClient = JSON.stringify(client);
@@ -413,46 +412,103 @@ export default class ProductProvider extends Component {
             .then(now => fetch(`${hostName}/checkoutAPI`))
             .then(now => this.clearCart())
             .then(now => this.setState({paypalLoading:false}))
-            .then(now => window.location.href = window.location.protocol + "//" + window.location.hostname + frontPort + "/thanks")
+            .then(now => this.setState({buyed : true}))
         }
     }//buyItems
 
     //login
     login = (user,psw) => {
-        fetch(`${hostName}/loginAPI?user=${user}&psw=${psw}`)
+        this.setState({loginLoading: true})
+        let credentials = `${user}:${psw}`;
+        let buff = Buffer.from(credentials);
+        let base64data = buff.toString('base64');
+        fetch(`${hostName}/loginAPI?user=${base64data}`)
         .then(res => res.json())
-        .then(res => this.setState({
-            logged:true,
-            user:{
-                name: res.firstName,
-                surname: res.lastName,
-                email: res.email,
-                username: res.login,
-                customerNum: res.customerNo,
-                address: {
-                    address: res.addresses[0].address1,
-                    city: res.addresses[0].city,
-                    country: res.addresses[0].countryCode,
-                    state: res.addresses[0].stateCode,
-                    number: res.addresses[0].suite,
-                    cap: res.addresses[0].postalCode
+        .then(res => {
+            console.log(res);
+            this.setState({
+                loginError : "",
+                logged:true,
+                user:{
+                    name: res.user.firstName,
+                    surname: res.user.lastName,
+                    email: res.user.email,
+                    username: res.user.login,
+                    customerNum: res.user.customerNo,
+                    address: {
+                        address: res.user.addresses[0].address1,
+                        city: res.user.addresses[0].city,
+                        country: res.user.addresses[0].countryCode,
+                        state: res.user.addresses[0].stateCode,
+                        number: res.user.addresses[0].suite,
+                        cap: res.user.addresses[0].postalCode,
+                    },
+                    wish: res.list.data.map(item => {
+                        if(item.type === "wish_list"){
+                            if(item.customerProductListItems){
+                                let tempProducts=this.state.products;
+                                item.customerProductListItems.map((wish) => {
+                                    tempProducts.map(product => {
+                                        product.compatibility.map((comp,index) => {
+                                            if(comp.id === wish.productId){
+                                                product.inCartStatus[index].inWish=true;
+                                            }
+                                            return null;
+                                        })
+                                        return null;
+                                    })
+                                    return null;
+                                })
+                            }
+                        return item.id;
+                        }   
+                        return null;
+                    })[0]
                 }
-            }
-        }))
+            });
+        })
         .catch(res => this.setState({loginError:"Username or password invalid"}))
+        .finally(res => this.setState({loginLoading: false}))
     }//login
 
     //logout
     logout = () => {
         fetch(`${hostName}/logoutAPI`)
         .then(this.setState({logged: false, user: null}))
+    }//logout
+
+    //signin
+    signin = (user,address) => {
+        let stringUser,stringAddress;
+        stringUser = JSON.stringify(user);
+        stringAddress = JSON.stringify(address);
+        fetch(`${hostName}/signinAPI?user=${stringUser}&address=${stringAddress}`)
+    }
+
+    //addToWishlist
+    addToWishlist = async(id,variation) => {
+        let tempProducts=[...this.state.products];
+        const index=tempProducts.indexOf(this.getProduct(id));
+        const product=tempProducts[index];
+        product.inCartStatus[variation].inWish=true;
+        fetch(`${hostName}/addToWishlistAPI?item=${product.compatibility[variation].id}&list=${this.state.user.wish}`)
+    }//addToWishlist
+
+    //removeFromWishlist
+    removeFromWishlist = async(id,variation) => {
+        let tempProducts=[...this.state.products];
+        const index=tempProducts.indexOf(this.getProduct(id));
+        const product=tempProducts[index];
+        product.inCartStatus[variation].inWish=false;
     }
 
     render() {
         return (
             <ProductContext.Provider value={{...this.state,getProduct: this.getProduct,handleChanges: this.handleChanges,
                 resetChanges:this.resetChanges,sort:this.sort, addToCart:this.addToCart, increment:this.increment,decrement:this.decrement,
-            removeItem:this.removeItem,clearCart:this.clearCart,buyItems: this.buyItems,setLimit: this.setLimit,login: this.login,logout: this.logout}}>
+                removeItem:this.removeItem,clearCart:this.clearCart,buyItems: this.buyItems,setLimit: this.setLimit,login: this.login,logout: this.logout, signin: this.signin,
+                addToWishlist: this.addToWishlist, removeFromWishlist:this.removeFromWishlist}
+            }>
                 {this.props.children}
             </ProductContext.Provider>
         );

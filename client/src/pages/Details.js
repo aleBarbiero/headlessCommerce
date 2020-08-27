@@ -37,10 +37,8 @@ export default class Details extends Component {
     }
 
     render() {
-        const {getProduct} = this.context;
-        const {addToCart} = this.context;
-        var {cartLoading} = this.context;
-        let {loading} = this.context;
+        const {getProduct,addToCart} = this.context;
+        let {cartLoading,loading,addToWishlist,removeFromWishlist,logged} = this.context;
         const product = getProduct(this.state.element);
         if(loading)
             return <Loading></Loading>
@@ -71,10 +69,24 @@ export default class Details extends Component {
                 <section className="single-product">
                     <div className="single-product-info">
                         <article className="desc">
-                            <button className="btn-primary" disabled={this.state.current===null?true:inCartStatus[this.state.current].inCart?true:false}
+                            <button className="btn-primary" disabled={this.state.current === null ? true : inCartStatus[this.state.current].inCart ? true:false}
                                 onClick={() => {addToCart(element,this.state.current)}}>
-                            {this.state.current===null ? "add to cart" : inCartStatus[this.state.current].inCart?"in cart":"add to cart"}
+                            {this.state.current === null ? "add to cart" : inCartStatus[this.state.current].inCart ? "in cart" : "add to cart"}
                             </button>
+                            {
+                                logged ? 
+                                    <button className={this.state.current !== null && inCartStatus[this.state.current].inWish ? "wish-remove" : "wish"} disabled={this.state.current === null ? true : false}
+                                    onClick={() => {if(inCartStatus[this.state.current].inWish === true)
+                                                        removeFromWishlist(element,this.state.current)
+                                                    else
+                                                        addToWishlist(element,this.state.current);
+                                                    this.setState({current:this.state.current})
+                                    }}>
+                                        {this.state.current === null ? "add to wishlist" : inCartStatus[this.state.current].inWish ? "remove from wishlist":"add to wishlist"}
+                                    </button>
+                                : ""
+                            }
+                            
                             <h3>Description</h3>
                             <p>{desc}</p>
                         </article>
