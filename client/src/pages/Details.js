@@ -75,7 +75,7 @@ export default class Details extends Component {
                             </button>
                             {
                                 logged ? 
-                                    <button className={this.state.current !== null && inCartStatus[this.state.current].inWish ? "wish-remove" : "wish"} disabled={this.state.current === null ? true : false}
+                                    <button className={this.state.current !== null && inCartStatus[this.state.current].inWish ? "btn-primary wish-remove" : "btn-primary wish"} disabled={this.state.current === null ? true : false}
                                     onClick={() => {if(inCartStatus[this.state.current].inWish === true)
                                                         removeFromWishlist(element,this.state.current)
                                                     else
@@ -98,7 +98,7 @@ export default class Details extends Component {
                             <ul className="compatibility">
                                 {  
                                     cartLoading? "" : compatibility.map((item,index) => {
-                                        return <button ref={"comp".concat(index)} className="btn-primary-choice"
+                                        return <button ref={"comp".concat(index)} className="btn-primary choice"
                                                     onClick={() => this.disableOthers(index,compatibility.length)} key={item.id}>{item.value}</button>
                                     })  
                                 }

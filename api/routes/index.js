@@ -605,7 +605,7 @@ signIn = async(client,address) => {
 
             }
         })
-        /*
+        /*token = await helpers.getShopperToken(config,{type:"guest"});
         config.headers["authorization"] = token.getBearerHeader();
         console.log(config);
         const pswClient = new Customer.ShopperCustomers(config);
@@ -614,7 +614,7 @@ signIn = async(client,address) => {
                 login: user.username
             }
         })
-        /*await pswClient.resetPassword({
+        await pswClient.resetPassword({
             body: {
                 login: user.username,
                 newPassword: user.psw,
@@ -641,7 +641,7 @@ addToWishlist = async(item,list) => {
     try{
         config.headers["authorization"] = userToken;
         const wishClient = new Customer.ShopperCustomers(config);
-        await wishClient.createCustomerProductListItem({
+        const result = await wishClient.createCustomerProductListItem({
             parameters: {
                 customerId: customId,
                 listId: list
@@ -655,6 +655,7 @@ addToWishlist = async(item,list) => {
             }
         })
         refreshList();
+        toReturn=result
     }catch(e){
         console.log(e),
         console.log(await e.response.text());
@@ -670,7 +671,7 @@ removeWishlist = async(item,list) => {
         const id=findInWishlist(item);
         config.headers["authorization"] = userToken;
         const wishClient = new Customer.ShopperCustomers(config);
-        await wishClient.deleteCustomerProductListItem({
+        const result = await wishClient.deleteCustomerProductListItem({
             parameters:{
                 customerId: customId,
                 listId: list,
@@ -678,6 +679,7 @@ removeWishlist = async(item,list) => {
             }
         })
         refreshList();
+        toReturn=result;
     }catch(e){
         console.log(e);
         console.log(await e.response.text());

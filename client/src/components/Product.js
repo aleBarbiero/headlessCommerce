@@ -1,7 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import defaultImg from '../images/404.png';
-import PropTypes from 'prop-types';
 
 export default function Product({product}) {
     const {name,element,images,price} = product;
@@ -20,13 +19,4 @@ export default function Product({product}) {
             </div>
         </article>
     )
-}
-
-Product.propTypes={
-    product:PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        element:PropTypes.string.isRequired,
-        images:PropTypes.arrayOf(PropTypes.string).isRequired,
-        price:PropTypes.number.isRequired,
-    })
 }

@@ -251,12 +251,13 @@ h6 {
 .section-title {
   text-align: center;
   margin-bottom: 4rem;
-  margin-top: 1em;
+  margin-top: 3em;
 }
 .section-title h4 {
   font-size: 2rem;
   letter-spacing: var(--mainSpacing);
   margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 .section-title div {
   width: 5rem;
@@ -468,18 +469,11 @@ h6 {
   grid-row-gap: 1rem;
 }
 
-.wish{
-  display: inline-block;
-  text-decoration: none;
-  letter-spacing: var(--mainSpacing);
+.desc .wish{
   margin-left: 2rem;
   color: var(--mainWhite);
   background: var(--mainBlack);
-  padding: 0.4rem 0.9rem;
   border: 3px solid var(--mainBlack);
-  transition: var(--mainTransition);
-  text-transform: uppercase;
-  cursor: pointer;
 }
 .wish:hover {
     background: transparent;
@@ -490,19 +484,13 @@ h6 {
   background: transparent;
   color: var(--mainBlack);
 }
-.wish-remove{
+.desc .wish-remove{
   background: transparent;
   color: var(--mainBlack);
-  display: inline-block;
-  text-decoration: none;
-  letter-spacing: var(--mainSpacing);
   margin-left: 2rem;
-  padding: 0.4rem 0.9rem;
   border: 3px solid var(--mainBlack);
-  transition: var(--mainTransition);
-  text-transform: uppercase;
-  cursor: pointer;
 }
+
 .wish-remove:hover{
   background: var(--mainBlack);
   color: var(--mainWhite)
@@ -528,48 +516,22 @@ h6 {
   }
 
 }
-.btn-primary-choice {
-    display: inline-block;
-    text-decoration: none;
-    letter-spacing: var(--mainSpacing);
-    color: var(--mainBlack);
-    background: var(--primaryColor);
-    padding: 0.4rem 0.9rem;
-    border: 3px solid var(--primaryColor);
-    transition: var(--mainTransition);
-    text-transform: uppercase;
-    cursor: pointer;
+.compatibility .choice {
     margin: 0.5rem;
-  }
-  .btn-primary-choice:hover {
-    background: transparent;
-    color: var(--primaryColor);
-  }
-  .btn-primary-choice:disabled{
-    background: transparent;
-    color: var(--primaryColor);
-    cursor: initial;
-  }
+}
+.compatibility .choice:disabled{
+  background: transparent;
+  color: var(--primaryColor);
+  cursor: initial;
+}
 
 /* elementList */
-.btn-primary-view{
+.view{
   display: inline-block;
-  text-decoration: none;
-  letter-spacing: var(--mainSpacing);
-  color: var(--mainBlack);
-  background: var(--primaryColor);
-  padding: 0.4rem 0.9rem;
-  border: 3px solid var(--primaryColor);
-  transition: var(--mainTransition);
-  text-transform: uppercase;
-  cursor: pointer;
   margin-top: 3.5rem;
   margin-left: 44%;
 }
-.btn-primary-view:hover{
-  background: transparent;
-  color: var(--primaryColor);
-}
+
 .productslist {
   padding: 5rem 0;
 }
@@ -698,7 +660,7 @@ h6 {
   color:var(--primaryColor);
 }
 
-/*search*/
+/*search
 .search, .search-btn {
 	color: var(--mainWhite);
 	font-size: 1.8rem;
@@ -746,7 +708,7 @@ input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance:none;
-}
+}*/
 
 /* cart */
 .container{
@@ -831,12 +793,12 @@ input[type="search"]::-webkit-search-results-decoration {
   border-bottom: 1px solid var(--primaryColor);
 } 
 .flex-col{
-padding: 1em;
-margin: 0 2em;
-background: none;
-width: -webkit-fill-available;
-padding-top: 2rem;
-padding-left: 2rem;
+  padding: 1em;
+  margin: 0 2em;
+  background: none;
+  width: -webkit-fill-available;
+  padding-top: 2rem;
+  padding-left: 2rem;
 }
 
 .flex-col-img{
@@ -853,14 +815,17 @@ padding-left: 2rem;
   margin: 1em;
   border-bottom: 1px solid var(--primaryColor);
 }
-.flex-row-multicolum .flex-col{ width: 40%; margin: 0 15px 15px}
+.flex-row-multicolum .flex-col{
+  width: 40%;
+  margin: 0 15px 15px
+}
 
 .thumb-img{
   width: 5rem;
   height: 5rem;
 }
 
-.small-btn{
+.btn-primary-small{
   text-transform: capitalize;
   font-size: 0.8rem;
   background-color: var(--primaryColor);
@@ -875,12 +840,12 @@ padding-left: 2rem;
   margin: 0.1em;
 }
 
-.small-btn:hover {
+.btn-primary-small:hover {
   background: transparent;
   color: var(--primaryColor);
 }
 
-.small-btn:disabled{
+.btn-primary-small:disabled{
   background: transparent;
   color: var(--primaryColor);
   cursor: initial;
@@ -899,41 +864,31 @@ padding-left: 2rem;
   color: var(--primaryColor);
 }
 
-.btn-primary-red {
+.red {
   display: inline-block;
-  text-decoration: none;
-  letter-spacing: var(--mainSpacing);
   color: crimson;
   background: transparent;
   margin: 1rem;
   padding: 0.8rem 0.9rem;
   border: 2px solid crimson;
-  transition: var(--mainTransition);
-  text-transform: uppercase;
-  cursor: pointer;
   margin-left: 2rem;
 }
-.btn-primary-red:hover {
+.red:hover {
   background: crimson;
   color: var(--mainWhite);
 }
 
-.btn-primary-green {
+.green {
   display: inline-block;
-  text-decoration: none;
-  letter-spacing: var(--mainSpacing);
   color: forestgreen;
   background: transparent;
   margin: 1rem;
   padding: 0.8rem 0.9rem;
   border: 2px solid forestgreen;
-  transition: var(--mainTransition);
-  text-transform: uppercase;
-  cursor: pointer;
   margin-left: 2rem;
 }
 
-.btn-primary-green:hover {
+.green:hover {
   background: forestgreen;
   color: var(--mainWhite);
 }
@@ -990,7 +945,7 @@ form label {
   letter-spacing: var(--mainSpacing);
   color: var(--mainBlack);
 }
-form h1 {
+.form-container h1 {
   font-size: 24px;
   color: var(--mainBlack);
   letter-spacing: var(--mainSpacing);
@@ -1202,7 +1157,7 @@ input[type=number] {
   }
 }
 
-/*Login*/
+/*user*/
 .login-button{
   width: 10rem;
   float: right;
@@ -1213,14 +1168,45 @@ input[type=number] {
   display: block
 }
 
-@media screen and (max-width: 1500px){
-  .login-button{
+
+.login-button{
     margin-bottom: 1rem;
-  }
+}
+
+.form-container .logout{
+  margin-top: 2rem;
+  width: fit-content;
+  position: relative;
+  left: 45%;
 }
 
 @media screen and (max-width: 1040px){
   .login div{
     align-items: center;
+  }
+}
+
+/*wihslist*/
+.productslist-wish {
+  padding: 1rem 0;
+}
+.productslist-center-wish {
+  width: auto;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  grid-row-gap: 2rem;
+  grid-column-gap: 30px;
+}
+
+@media screen and (min-width: 776px) {
+  .productslist-center-wish {
+    width: 50vw;
+  }
+}
+@media screen and (min-width: 992px) {
+  .productslist-center-wish {
+    width: 50vw;
+    max-width: 1170px;
   }
 }

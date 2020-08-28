@@ -121,9 +121,9 @@ export default class Checkout extends Component {
                             <p><strong>Total: </strong>{cartTotal}€</p>
                         </div>
                         <Link to="/cart">
-                            <button className="btn-primary-red">Back to cart</button>
+                            <button className="btn-primary red">Back to cart</button>
                         </Link>
-                        <button className="btn-primary-green" onClick={() => this.buy()}>buy now</button>
+                        <button className="btn-primary green" onClick={() => this.buy()}>buy now</button>
                         <PayPal></PayPal>
                     </div>
                 </div>

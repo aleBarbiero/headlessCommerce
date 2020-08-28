@@ -21,10 +21,10 @@ export default function CartItem({item,value}) {
                 {price}€
             </div>
             <div className="flex-col">
-                <button className="small-btn" onClick={() => {decrement(element,variationId)}}
+                <button className="btn-primary-small" onClick={() => {decrement(element,variationId)}}
                     disabled={qty===1?true:false}>-</button>
-                <button className="small-btn" disabled={true}>{qty}</button>
-                <button className="small-btn" onClick={() => {increment(element,variationId)}}
+                <button className="btn-primary-small" disabled={true}>{qty}</button>
+                <button className="btn-primary-small" onClick={() => {increment(element,variationId)}}
                     disabled={qty===10?true:false}>+</button>
             </div>
             <div className="flex-col">

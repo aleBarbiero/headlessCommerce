@@ -10,10 +10,10 @@ export default function CartTotal({value}) {
             <div className="container-total">
                 <div className="flex-row-last">
                     <div className="flex-column">
-                        <button className="btn-primary-red" onClick={() => {clearCart()}}>
+                        <button className="btn-primary red" onClick={() => {clearCart()}}>
                             clear cart
                         </button><Link to="/checkout" >
-                        <button className="btn-primary-green">
+                        <button className="btn-primary green">
                             buy now
                         </button></Link>
                      </div>   

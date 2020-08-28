@@ -30,7 +30,7 @@ export default function ProductsList({sorted, limit}) {
             </div>
             {limit < sorted.length ? 
                 <div>
-                    <button className="btn-primary-view" onClick={() => setLimit()}>View more...</button>
+                    <button className="btn-primary view" onClick={() => setLimit()}>View more...</button>
                 </div> : ""
             }
         </section>

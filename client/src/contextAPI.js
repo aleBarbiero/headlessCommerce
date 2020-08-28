@@ -29,7 +29,8 @@ export default class ProductProvider extends Component {
             loginError: "",
             user: null,
             buyed: false,
-            loginLoading: false
+            loginLoading: false,
+            wishlist: []
         };
         this.setUp();
     }
@@ -75,7 +76,7 @@ export default class ProductProvider extends Component {
                                 },() => this.addTotals());
                             }
                         })
-                        .then(now => this.checkLogged())
+                        .then(this.checkLogged())
                     }//if
                 })
             });
@@ -454,13 +455,17 @@ export default class ProductProvider extends Component {
 
     //addToWishlist
     addToWishlist = async(id,variation) => {
-        console.log(id,variation)
         let tempProducts=[...this.state.products];
         const index=tempProducts.indexOf(this.getProduct(id));
         const product=tempProducts[index];
         product.inCartStatus[variation].inWish=true;
+        let tempWish = [...this.state.wishlist,{product: product,variation: variation}];
+        this.setState({
+            wishlist: tempWish
+        })
         fetch(`${hostName}/addToWishlistAPI?item=${product.compatibility[variation].id}&list=${this.state.user.wish}`)
-        .catch(now => this.addToWishlist(id,variation));
+        .then(res => res.json())
+        .catch(now => this.setState({logged:false, user: null}));
     }//addToWishlist
 
     //removeFromWishlist
@@ -469,13 +474,16 @@ export default class ProductProvider extends Component {
         const index=tempProducts.indexOf(this.getProduct(id));
         const product=tempProducts[index];
         product.inCartStatus[variation].inWish=false;
+        let tempWish = [...this.state.wishlist];
+        tempWish = tempWish.filter(item => (item.product.id !== product.id || item.variation !== variation));
+        this.setState({wishlist: tempWish})
         fetch(`${hostName}/removeFromWishlistAPI?item=${product.compatibility[variation].id}&list=${this.state.user.wish}`)
-        .catch(now => this.removeFromWishlistid,variation);
+        .then(res => res.json())
+        .catch(now => this.setState({logged:false, user: null}));
     }//removeFromWishlist
 
     //setUser
     setUser = (res) => {
-        console.log(res)
         this.setState({
             loginError : "",
             logged:true,
@@ -502,6 +510,11 @@ export default class ProductProvider extends Component {
                                     product.compatibility.map((comp,index) => {
                                         if(comp.id === wish.productId){
                                             product.inCartStatus[index].inWish=true;
+                                            this.setState({wishlist: [...this.state.wishlist,{
+                                                    product: product,
+                                                    variation: index
+                                                }]
+                                            })
                                         }
                                         return null;
                                     })
