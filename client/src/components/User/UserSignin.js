@@ -147,8 +147,8 @@ export default class UserSignin extends Component {
 
     
     render() {
-        let {loading,loginLoading,logged} = this.context;
-        if(loading || loginLoading)
+        let {loading,loginLoading,logged,signinError,signinLoading} = this.context;
+        if(loading || loginLoading || signinLoading)
             return null;
         if(!logged)
             return (
@@ -251,6 +251,9 @@ export default class UserSignin extends Component {
                                         e.preventDefault();
                                         this.validate();}
                                     }>Sign in</button>
+                                </div>
+                                <div className="errorForm">
+                                    {signinError}
                                 </div>
                             </form>
                         </div>

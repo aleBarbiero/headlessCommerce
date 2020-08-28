@@ -27,9 +27,11 @@ export default class ProductProvider extends Component {
             paypalLoading: false,
             logged: false,
             loginError: "",
+            signinError:"",
             user: null,
             buyed: false,
             loginLoading: false,
+            signinLoading: false,
             wishlist: []
         };
         this.setUp();
@@ -435,7 +437,7 @@ export default class ProductProvider extends Component {
         fetch(`${hostName}/loginAPI?user=${base64data}`)
         .then(res => res.json())
         .then(res => this.setUser(res))
-        .catch(res => this.setState({loginError:"Username or password invalid"}))
+        //.catch(res => this.setState({loginError:"Username or password invalid"}))
         .finally(res => this.setState({loginLoading: false}))
     }//login
 
@@ -447,11 +449,15 @@ export default class ProductProvider extends Component {
 
     //signin
     signin = (user,address) => {
+        this.setState({signinLoading:true})
         let stringUser,stringAddress;
         stringUser = JSON.stringify(user);
         stringAddress = JSON.stringify(address);
         fetch(`${hostName}/signinAPI?user=${stringUser}&address=${stringAddress}`)
-    }
+        .then(now => this.login(user.username,user.psw))
+        .catch(res => this.setState({signinError:"Username already used"}))
+        .finally(res => this.setState({signinLoading:false}))
+    }//signin
 
     //addToWishlist
     addToWishlist = async(id,variation) => {
@@ -486,6 +492,7 @@ export default class ProductProvider extends Component {
     setUser = (res) => {
         this.setState({
             loginError : "",
+            signinError: "",
             logged:true,
             user:{
                 name: res.user.firstName,
@@ -500,8 +507,13 @@ export default class ProductProvider extends Component {
                     state: res.user.addresses[0].stateCode,
                     number: res.user.addresses[0].suite,
                     cap: res.user.addresses[0].postalCode,
-                },
-                wish: res.list.data.map(item => {
+                }
+            }
+        });
+        if(res.list && res.list.data){
+            this.setState({
+                wish: 
+                    res.list.data.map(item => {
                     if(item.type === "wish_list"){
                         if(item.customerProductListItems){
                             let tempProducts=this.state.products;
@@ -527,8 +539,8 @@ export default class ProductProvider extends Component {
                     }   
                     return null;
                 })[0]
-            }
-        });
+            })
+        }
     }//setUser
 
     render() {

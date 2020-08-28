@@ -48,8 +48,8 @@ export default class UserLogin extends Component {
     }//validateLog
 
     render() {
-        let {loginError,loading,loginLoading,logged} = this.context;
-        if(loading || loginLoading)
+        let {loginError,loading,loginLoading,logged,signinLoading} = this.context;
+        if(loading || loginLoading || signinLoading)
             return <Loading></Loading>
         if(!logged)
             return (

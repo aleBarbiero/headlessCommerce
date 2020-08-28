@@ -561,6 +561,7 @@ login = async(user) => {
         });
         userObj.user = details;
         toReturn=userObj;
+        console.log(userObj)
     }catch(e){
         console.log(e);
         console.log(await e.response.text())
@@ -580,47 +581,37 @@ router.get("/signinAPI",function(req,res,next){
 signIn = async(client,address) => {
     try{
         let user = JSON.parse(client);
-        const num = Math.random().toString().slice(2,10);
-        let token = await getAuthToken("sfcc.customerlists.rw ");
-        if (!!!token)
-            return;
-        const signInClient = new Customer.Customers(config);
-        await signInClient.createCustomerInCustomerList({
-            headers:{
-                authorization: `Bearer ${token}`
-            },
+        let shipment = JSON.parse(address);
+        token = await helpers.getShopperToken(config, { type: "guest" });
+        config.headers["authorization"] = token.getBearerHeader();
+        const registerClient = new Customer.ShopperCustomers(config);
+        const newCustomer = await registerClient.registerCustomer({
+            body: {
+                customer: {
+                    login: user.username,
+                    lastName: user.surname,
+                    firstName: user.name,
+                    email: user.email
+                },
+                password: user.psw
+            }
+        })
+        await registerClient.createCustomerAddress({
             parameters: {
-                customerNo: num,
-                listId: "headlessCommerce"
+                customerId: newCustomer.customerId
             },
             body: {
-                credentials:{
-                    enabled: true,
-                    login: user.username
-                },
-                customerNo: num,
-                email: user.email,
+                address1: shipment.address,
+                addressId: "0001",
+                countryCode: "IT",
                 firstName: user.name,
                 lastName: user.surname,
-
+                postalCode: shipment.cap,
+                suite: shipment.number,
+                stateCode: shipment.state,
+                city: shipment.city
             }
-        })
-        /*token = await helpers.getShopperToken(config,{type:"guest"});
-        config.headers["authorization"] = token.getBearerHeader();
-        console.log(config);
-        const pswClient = new Customer.ShopperCustomers(config);
-        const resetToken = pswClient.getResetPasswordToken({
-            body: {
-                login: user.username
-            }
-        })
-        await pswClient.resetPassword({
-            body: {
-                login: user.username,
-                newPassword: user.psw,
-                resetToken: resetToken
-            }
-        })*/
+        }) 
     }catch(e){
         console.log(e);
         console.log(await e.response.text());
