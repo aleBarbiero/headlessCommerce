@@ -75,6 +75,7 @@ export default class ProductProvider extends Component {
                                 },() => this.addTotals());
                             }
                         })
+                        .then(now => this.checkLogged())
                     }//if
                 })
             });
@@ -182,6 +183,14 @@ export default class ProductProvider extends Component {
                 return arr;
         })
         .catch(error => window.location.reload(false))
+    }//getCart
+
+    //checkLogged
+    checkLogged = () => {
+        return fetch(`${hostName}/loggedAPI`)
+        .then(res => res.json())
+        .then(res => this.setUser(res))
+        .catch(res => this.setState({logged: false}))
     }
 
     //sort
@@ -424,49 +433,7 @@ export default class ProductProvider extends Component {
         let base64data = buff.toString('base64');
         fetch(`${hostName}/loginAPI?user=${base64data}`)
         .then(res => res.json())
-        .then(res => {
-            console.log(res);
-            this.setState({
-                loginError : "",
-                logged:true,
-                user:{
-                    name: res.user.firstName,
-                    surname: res.user.lastName,
-                    email: res.user.email,
-                    username: res.user.login,
-                    customerNum: res.user.customerNo,
-                    address: {
-                        address: res.user.addresses[0].address1,
-                        city: res.user.addresses[0].city,
-                        country: res.user.addresses[0].countryCode,
-                        state: res.user.addresses[0].stateCode,
-                        number: res.user.addresses[0].suite,
-                        cap: res.user.addresses[0].postalCode,
-                    },
-                    wish: res.list.data.map(item => {
-                        if(item.type === "wish_list"){
-                            if(item.customerProductListItems){
-                                let tempProducts=this.state.products;
-                                item.customerProductListItems.map((wish) => {
-                                    tempProducts.map(product => {
-                                        product.compatibility.map((comp,index) => {
-                                            if(comp.id === wish.productId){
-                                                product.inCartStatus[index].inWish=true;
-                                            }
-                                            return null;
-                                        })
-                                        return null;
-                                    })
-                                    return null;
-                                })
-                            }
-                        return item.id;
-                        }   
-                        return null;
-                    })[0]
-                }
-            });
-        })
+        .then(res => this.setUser(res))
         .catch(res => this.setState({loginError:"Username or password invalid"}))
         .finally(res => this.setState({loginLoading: false}))
     }//login
@@ -487,11 +454,13 @@ export default class ProductProvider extends Component {
 
     //addToWishlist
     addToWishlist = async(id,variation) => {
+        console.log(id,variation)
         let tempProducts=[...this.state.products];
         const index=tempProducts.indexOf(this.getProduct(id));
         const product=tempProducts[index];
         product.inCartStatus[variation].inWish=true;
         fetch(`${hostName}/addToWishlistAPI?item=${product.compatibility[variation].id}&list=${this.state.user.wish}`)
+        .catch(now => this.addToWishlist(id,variation));
     }//addToWishlist
 
     //removeFromWishlist
@@ -500,7 +469,54 @@ export default class ProductProvider extends Component {
         const index=tempProducts.indexOf(this.getProduct(id));
         const product=tempProducts[index];
         product.inCartStatus[variation].inWish=false;
-    }
+        fetch(`${hostName}/removeFromWishlistAPI?item=${product.compatibility[variation].id}&list=${this.state.user.wish}`)
+        .catch(now => this.removeFromWishlistid,variation);
+    }//removeFromWishlist
+
+    //setUser
+    setUser = (res) => {
+        console.log(res)
+        this.setState({
+            loginError : "",
+            logged:true,
+            user:{
+                name: res.user.firstName,
+                surname: res.user.lastName,
+                email: res.user.email,
+                username: res.user.login,
+                customerNum: res.user.customerNo,
+                address: {
+                    address: res.user.addresses[0].address1,
+                    city: res.user.addresses[0].city,
+                    country: res.user.addresses[0].countryCode,
+                    state: res.user.addresses[0].stateCode,
+                    number: res.user.addresses[0].suite,
+                    cap: res.user.addresses[0].postalCode,
+                },
+                wish: res.list.data.map(item => {
+                    if(item.type === "wish_list"){
+                        if(item.customerProductListItems){
+                            let tempProducts=this.state.products;
+                            item.customerProductListItems.map((wish) => {
+                                tempProducts.map(product => {
+                                    product.compatibility.map((comp,index) => {
+                                        if(comp.id === wish.productId){
+                                            product.inCartStatus[index].inWish=true;
+                                        }
+                                        return null;
+                                    })
+                                    return null;
+                                })
+                                return null;
+                            })
+                        }
+                    return item.id;
+                    }   
+                    return null;
+                })[0]
+            }
+        });
+    }//setUser
 
     render() {
         return (

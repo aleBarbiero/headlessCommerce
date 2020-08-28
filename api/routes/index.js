@@ -7,7 +7,7 @@ const e = require("express");
 
 const dirPath = "/home/alessio_barbiero/headlessCommerce/client"
 
-const {helpers,Search,Product,Checkout,Customer} = commerceSDK;
+const {helpers,Product,Checkout,Customer} = commerceSDK;
 var toReturn;
 const clientId = "8bfe8327-a12a-4ca5-93a4-ada2ab99c6e1";
 const clientSecret = "HeadlessCommercePOC";
@@ -27,10 +27,10 @@ var basketId;
 var categoriesResult;
 var categoryProductsResult
 var productDetailsResult;
-var searchResult;
 var cartResponse;
 var customId=null;
 var userToken=null;
+var userObj=null;
 
 async function getAuthToken(scope){
   let credentials = `${clientId}:${clientSecret}`;
@@ -54,7 +54,7 @@ async function getAuthToken(scope){
   return token;
 }
 
-async function findInCart(id){
+function findInCart(id){
     let itemId="temp";
     if(cartResponse["productItems"]){
         cartResponse["productItems"].map(item => {
@@ -65,41 +65,29 @@ async function findInCart(id){
     return itemId;
 }
 
-//---------------SEARCH---------------//
+function findInWishlist(id){
+    let itemId="temp";
+    userObj.list.data.map(name => {
+        if(name.type === "wish_list"){
+            name.customerProductListItems.map(item => {
+                if(item.productId === id)
+                    itemId=item.id;
+            })
+        }
+    })
+    return itemId;    
+}
 
-router.get("/searchAPI",function(req,res,next){
-    find(req.query.param).then(now => res.send(searchResult));
-});
-
-find = (param) =>{
-    helpers.getShopperToken(config, { type: "guest" }).then(async (token) => {
-        try{
-            config.headers["authorization"] = token.getBearerHeader();
-            const searchClient = new Search.ShopperSearch(config);
-            const searchResults = await searchClient.productSearch({
-              parameters:{
-                q:param,
-                limit: 50
-              },
-              retrySettings:{
-                  forever: true
-              }         
-            });
-            if (searchResults.total) {
-            } else {
-                console.log("No results for search");
-            }
-            searchResult=searchResults;
-        }catch (e){
-            console.error(e);
-            console.error(await e.response.text());
-        }//internal-try-catch
-    }).catch(async (e) => {
-        console.error(e);
-        console.error(await e.response.text());
-    });//external-try-catch
-}//find
-
+async function refreshList(){
+    config.headers["authorization"] = userToken;
+    const userDetailsClient = new Customer.ShopperCustomers(config);
+    const list = await userDetailsClient.getCustomerProductLists({
+        parameters: {
+            customerId: customId
+        }
+    })
+    userObj.list=list;
+}
 //---------------DETAILS---------------//
 
 router.get("/detailsAPI",function(req,res,next){
@@ -300,7 +288,7 @@ router.get("/removeItemToBasketAPI",function(req,res,next){
 
 removeItem = async(item) => {
     try{
-        let id=await findInCart(item);
+        let id=findInCart(item);
         config.headers["authorization"] = basketToken.getBearerHeader();
         const shopperClient = new Checkout.ShopperBaskets(config);
         const itemResult = await shopperClient.removeItemFromBasket({
@@ -327,7 +315,7 @@ router.get("/updateItemToBasketAPI",function(req,res,next){
 
 updateItem = async(item,tot) => {
     try{
-        let id=await findInCart(item);
+        let id=findInCart(item);
         config.headers["authorization"] = basketToken.getBearerHeader();
         const shopperClient = new Checkout.ShopperBaskets(config);
         const itemResult = await shopperClient.updateItemInBasket({
@@ -562,19 +550,16 @@ login = async(user) => {
             }
         },true)
         userToken = await customerRes.headers.get("authorization");
+        userObj = {user: null,list: null};
+        await refreshList();
         config.headers["authorization"] = userToken;
         const userDetailsClient = new Customer.ShopperCustomers(config);
-        const list = await userDetailsClient.getCustomerProductLists({
-            parameters: {
-                customerId: customId
-            }
-        })
         const details = await userDetailsClient.getCustomer({
             parameters: {
                 customerId: customId
             }
         });
-        const userObj = {list: list, user: details}
+        userObj.user = details;
         toReturn=userObj;
     }catch(e){
         console.log(e);
@@ -584,7 +569,7 @@ login = async(user) => {
 }//login
 
 router.get("/logoutAPI",function(req,res,next){
-    customId=null,userToken=null;
+    customId=null,userToken=null,userObj=null;
     res.send()
 })//logout
 
@@ -669,11 +654,39 @@ addToWishlist = async(item,list) => {
                 public: true
             }
         })
+        refreshList();
     }catch(e){
         console.log(e),
         console.log(await e.response.text());
     }
-}
+}//addToWishlist
+
+router.get("/removeFromWishlistAPI",function(req,res,next){
+    removeWishlist(req.query.item,req.query.list).then(now => res.send(toReturn))
+})
+
+removeWishlist = async(item,list) => {
+    try{
+        const id=findInWishlist(item);
+        config.headers["authorization"] = userToken;
+        const wishClient = new Customer.ShopperCustomers(config);
+        await wishClient.deleteCustomerProductListItem({
+            parameters:{
+                customerId: customId,
+                listId: list,
+                itemId: id
+            }
+        })
+        refreshList();
+    }catch(e){
+        console.log(e);
+        console.log(await e.response.text());
+    }
+}//removeWishlist
+
+router.get("/loggedAPI",function(req,res,next){
+    res.send(userObj);
+})
 
 router.get('/*',function(req,res,next) {
     res.sendFile(path.resolve(dirPath, "build/index.html"))

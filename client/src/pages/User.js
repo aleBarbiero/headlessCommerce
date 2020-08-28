@@ -168,8 +168,8 @@ export default class User extends Component {
     }//validate
 
     render() {
-        let {logged,loginError,user,logout,loginLoading} = this.context;
-        if(loginLoading)
+        let {logged,loginError,user,logout,loginLoading,loading} = this.context;
+        if(loginLoading || loading)
             return <Loading></Loading>
         if(!logged)
             return(
