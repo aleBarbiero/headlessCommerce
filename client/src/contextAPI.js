@@ -437,7 +437,7 @@ export default class ProductProvider extends Component {
         fetch(`${hostName}/loginAPI?user=${base64data}`)
         .then(res => res.json())
         .then(res => this.setUser(res))
-        //.catch(res => this.setState({loginError:"Username or password invalid"}))
+        .catch(res => this.setState({loginError:"Username or password invalid"}))
         .finally(res => this.setState({loginLoading: false}))
     }//login
 
@@ -454,8 +454,9 @@ export default class ProductProvider extends Component {
         stringUser = JSON.stringify(user);
         stringAddress = JSON.stringify(address);
         fetch(`${hostName}/signinAPI?user=${stringUser}&address=${stringAddress}`)
-        .then(now => this.login(user.username,user.psw))
+        .then(res => res.json())
         .catch(res => this.setState({signinError:"Username already used"}))
+        .then(now => this.login(user.username,user.psw))
         .finally(res => this.setState({signinLoading:false}))
     }//signin
 
@@ -469,7 +470,7 @@ export default class ProductProvider extends Component {
         this.setState({
             wishlist: tempWish
         })
-        fetch(`${hostName}/addToWishlistAPI?item=${product.compatibility[variation].id}&list=${this.state.user.wish}`)
+        fetch(`${hostName}/addToWishlistAPI?item=${product.compatibility[variation].id}&list=${this.state.wish}`)
         .then(res => res.json())
         .catch(now => this.setState({logged:false, user: null}));
     }//addToWishlist
@@ -483,7 +484,7 @@ export default class ProductProvider extends Component {
         let tempWish = [...this.state.wishlist];
         tempWish = tempWish.filter(item => (item.product.id !== product.id || item.variation !== variation));
         this.setState({wishlist: tempWish})
-        fetch(`${hostName}/removeFromWishlistAPI?item=${product.compatibility[variation].id}&list=${this.state.user.wish}`)
+        fetch(`${hostName}/removeFromWishlistAPI?item=${product.compatibility[variation].id}&list=${this.state.wish}`)
         .then(res => res.json())
         .catch(now => this.setState({logged:false, user: null}));
     }//removeFromWishlist

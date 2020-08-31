@@ -561,7 +561,6 @@ login = async(user) => {
         });
         userObj.user = details;
         toReturn=userObj;
-        console.log(userObj)
     }catch(e){
         console.log(e);
         console.log(await e.response.text())
@@ -611,16 +610,25 @@ signIn = async(client,address) => {
                 stateCode: shipment.state,
                 city: shipment.city
             }
-        }) 
+        })
+        await registerClient.createCustomerProductList({
+            parameters: {
+                customerId: newCustomer.customerId
+            },
+            body: {
+                description: "wish list",
+                id: "wish_list",
+                type: "wish_list"
+            }
+        })
     }catch(e){
-        console.log(e);
-        console.log(await e.response.text());
-        /*await e.response.json().then(now => {
+        console.log(e)
+        await e.response.json().then(now => {
             if(now.title.toUpperCase() === "LOGIN ALREADY IN USE")
                 toReturn=null;
             else
                 signIn(client,address);
-        })*/
+        })
     }//try_catch
 }//signIn
 

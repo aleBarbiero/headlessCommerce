@@ -101,12 +101,6 @@ export default class UserSignin extends Component {
         }else
             this.setState({stateError: ""});
 
-        if(this.state.country.length <= 1){
-            this.setState({countryError: "Invalid country"});
-            error=true;
-        }else
-            this.setState({countryError: ""});
-
         if(this.state.cap.toString().length !== 5){
             this.setState({capError: "Invalid code"});
             error=true;
@@ -188,7 +182,7 @@ export default class UserSignin extends Component {
                                             <label htmlFor="newUsername">Username</label>
                                             <input type="text" name="newUsername" onChange={this.handleChanges}></input>
                                             <div className="errorForm">
-                                                {this.state.errorNewUsername}
+                                                {this.state.errorNewUsername}{signinError}
                                             </div>
                                         </div>    
                                         <div>
@@ -202,10 +196,14 @@ export default class UserSignin extends Component {
                                     <div className="address-info-street">
                                         <div className="country">
                                             <label htmlFor="country">country</label>
-                                            <input type="text" name="country" onChange={this.handleChanges}/>
-                                            <div className="errorForm">
-                                                {this.state.countryError}
-                                            </div>
+                                            <select name="country">
+                                                <option value="US" key="US">US (United States)</option>
+                                                <option value="IT" key="IT">IT (Italy)</option>
+                                                <option value="FR" key="FR">FR (France)</option>
+                                                <option value="GB" key="GB">GB (United Kingdom)</option>
+                                                <option value="JP" key="JP">JP (Japan)</option>
+                                                <option value="CN" key="CN">CN (China)</option>
+                                            </select>
                                         </div>
                                         <div className="address">
                                             <label htmlFor="name">address</label>
@@ -251,9 +249,6 @@ export default class UserSignin extends Component {
                                         e.preventDefault();
                                         this.validate();}
                                     }>Sign in</button>
-                                </div>
-                                <div className="errorForm">
-                                    {signinError}
                                 </div>
                             </form>
                         </div>
