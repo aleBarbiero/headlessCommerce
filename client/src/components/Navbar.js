@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import logo from '../images/logo.png';
 import {BsChevronBarRight} from 'react-icons/bs';
 import {RiShoppingCartLine, RiUser3Line} from 'react-icons/ri';
+import {FiHeart} from 'react-icons/fi'
 import {Link} from 'react-router-dom';
 import {ProductContext} from '../contextAPI'
 
@@ -19,7 +20,7 @@ export default class Navbar extends Component {
         this.setState({isOpen:!this.state.isOpen})
     }
     render() {
-        let {cart} = this.context;
+        let {cart,wishlist} = this.context;
         return (
             <nav className="navbar">
                 <div className="nav-center">
@@ -38,9 +39,6 @@ export default class Navbar extends Component {
                     </div>
                     <ul className={this.state.isOpen ? "nav-links show-nav" : "nav-links"}>
                         <li>
-                            <Link to="/">Home</Link>
-                        </li>
-                        <li>
                             <Link to="/list">Products</Link>
                         </li>
                         <li>
@@ -48,6 +46,9 @@ export default class Navbar extends Component {
                                 <RiUser3Line></RiUser3Line>
                             </Link>
                         </li>
+                            {
+                                wishlist.length > 0 ? <li className="cart">(<FiHeart className="nav-icon-wish"></FiHeart>{wishlist.length})</li> : ""
+                            }
                         <li>
                             <Link to="/cart">
                                 <RiShoppingCartLine></RiShoppingCartLine>

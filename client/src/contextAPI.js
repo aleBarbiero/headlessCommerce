@@ -246,6 +246,7 @@ export default class ProductProvider extends Component {
         product.inCartStatus[variation].qty=1;
         product.inCartStatus[variation].total=product.price;
         fetch(`${hostName}/addItemToBasketAPI?item=${product.compatibility[variation].id}`)
+        .catch(error => window.location.reload(true))
         let cartProduct={element: product.element,variation: product.compatibility[variation].value,variationId: variation,name: product.name, price:product.price,
             qty: product.inCartStatus[variation].qty,total: product.inCartStatus[variation].total,images: product.images,id:product.compatibility[variation].id,brand: product.brand}
         this.setState(() => {
@@ -265,6 +266,7 @@ export default class ProductProvider extends Component {
         product.qty++;
         product.total=product.qty*product.price;
         fetch(`${hostName}/updateItemToBasketAPI?item=${product.id}&tot=${product.qty}`)
+        .catch(error => window.location.reload(true))
         this.setState(() => {
             return {
                 cart:[...tempCart]
@@ -282,6 +284,7 @@ export default class ProductProvider extends Component {
         const product = tempCart[index];
         product.qty--;
         fetch(`${hostName}/updateItemToBasketAPI?item=${product.id}&tot=${product.qty}`)
+        .catch(error => window.location.reload(true))
         product.total=product.qty*product.price;
         this.setState(() => {
             return {
@@ -312,6 +315,7 @@ export default class ProductProvider extends Component {
         const indexCart=tempCart.indexOf(selectedCart);
         const item=tempCart[indexCart].id;
         fetch(`${hostName}/removeItemToBasketAPI?item=${item}`)
+        .catch(error => window.location.reload(true))
         tempCart = tempCart.filter(item => item.element !== id || (item.element === id && item.variationId !== variation));
         const index = tempProducts.indexOf(this.getProduct(id));
         let removedProduct = tempProducts[index];
@@ -414,6 +418,7 @@ export default class ProductProvider extends Component {
             .then(now => fetch(`${hostName}/checkoutAPI`))
             .then(now => this.clearCart())
             .then(now => this.setState({buyed : true}))
+            .catch(error => window.location.reload(true))
         }else{
             let stringClient,stringShipping,stringPayment;
             stringClient = JSON.stringify(client);
@@ -425,6 +430,7 @@ export default class ProductProvider extends Component {
             .then(now => this.clearCart())
             .then(now => this.setState({paypalLoading:false}))
             .then(now => this.setState({buyed : true}))
+            .catch(error => window.location.reload(true))
         }
     }//buyItems
 
@@ -445,6 +451,7 @@ export default class ProductProvider extends Component {
     logout = () => {
         fetch(`${hostName}/logoutAPI`)
         .then(this.setState({logged: false, user: null}))
+        .catch(error => this.setState({logged: false, user: null}))
     }//logout
 
     //signin
@@ -455,8 +462,13 @@ export default class ProductProvider extends Component {
         stringAddress = JSON.stringify(address);
         fetch(`${hostName}/signinAPI?user=${stringUser}&address=${stringAddress}`)
         .then(res => res.json())
-        .catch(res => this.setState({signinError:"Username already used"}))
-        .then(now => this.login(user.username,user.psw))
+        .then(now => {
+            if(!(typeof(now.error) === "undefined"))
+                this.setState({signinError: "Username not available"})
+            else
+                this.login(user.username,user.psw)
+        })
+        .catch(error => window.location.reload(true))
         .finally(res => this.setState({signinLoading:false}))
     }//signin
 

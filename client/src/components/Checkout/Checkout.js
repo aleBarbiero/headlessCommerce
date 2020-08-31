@@ -182,7 +182,7 @@ export default class Checkout extends Component {
         const value = target.value;
         const name = target.name;
         this.setState({
-            [name] : value
+            [name] : value.replace(/[^a-z0-9]/gi, '')
         })
     }
 

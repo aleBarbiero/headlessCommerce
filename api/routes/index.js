@@ -145,6 +145,7 @@ const getCategories = async () => {
   }catch (e){
     console.error(e);
     console.error(await e.response.text());
+    categoriesResult=null;
     };
 };//getCategories
 
@@ -188,6 +189,7 @@ const getCategoryProducts = async (id) => {
     }catch (e){
         console.error(e);
         console.error(await e.response.text());
+        categoryProductsResult=null;
     };
 };//getCategoryProducts
 
@@ -219,6 +221,7 @@ createBasket = async() =>{
       }catch (e){
           console.error(e);
           console.error(await e.response.text());
+          toReturn=null;
       }//internal-try-catch
 }//createBasket
 
@@ -277,6 +280,7 @@ addItemToBasket = async(item) =>{
         toReturn=searchResults;
     }catch (e){
         console.log(e);
+        toReturn=null;
     }//internal-try-catch
 }//getBasket
 
@@ -304,6 +308,7 @@ removeItem = async(item) => {
         toReturn=itemResult;
     }catch (e){
         console.log(e);
+        toReturn=null;
     }//internal-try-catch
 }//updateItem
 
@@ -331,6 +336,7 @@ updateItem = async(item,tot) => {
         toReturn=itemResult;
     }catch (e){
         console.log(e);
+        toReturn=null;
     }//internal-try-catch
 }//updateItem
 
@@ -410,6 +416,7 @@ onDelivery = async(ship,user) => {
     }catch (e){
         console.error(e);
         console.error(await e.response.text());
+        toReturn=null;
     }//internal-try-catch
 }//onDelivery
 
@@ -457,6 +464,7 @@ checkout = async() => {
     }catch (e){
         console.error(e);
         console.error(await e.response.text());
+        toReturn=null;
     }//internal-try-catch*/
 }//checkout
 
@@ -522,6 +530,7 @@ payPal = async(ship,user,pay) => {
     }catch (e){
         console.error(e);
         console.error(await e.response.text());
+        toReturn=null;
     }//internal-try-catch
 }//PayPal
 
@@ -625,9 +634,9 @@ signIn = async(client,address) => {
         console.log(e)
         await e.response.json().then(now => {
             if(now.title.toUpperCase() === "LOGIN ALREADY IN USE")
-                toReturn=null;
+                toReturn={error: ""};
             else
-                signIn(client,address);
+                toReturn=null;
         })
     }//try_catch
 }//signIn
@@ -682,6 +691,7 @@ removeWishlist = async(item,list) => {
     }catch(e){
         console.log(e);
         console.log(await e.response.text());
+        toReturn=null;
     }
 }//removeWishlist
 
