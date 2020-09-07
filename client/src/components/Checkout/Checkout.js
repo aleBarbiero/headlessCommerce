@@ -181,9 +181,14 @@ export default class Checkout extends Component {
         const target = event.target;
         const value = target.value;
         const name = target.name;
-        this.setState({
-            [name] : value.replace(/[^a-z0-9]/gi, '')
-        })
+        if(name !== "email" && name !== "number")
+            this.setState({
+                [name] : value.replace(/[^a-z0-9]/gi, '')
+            })
+        else
+            this.setState({
+                [name] : value
+            })
     }
 
     checkErrors = () => {

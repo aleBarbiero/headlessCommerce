@@ -43,7 +43,7 @@ export default class UserSignin extends Component {
         const target = event.target;
         const value = target.value;
         const name = target.name;
-        if(name !== "newEmail")
+        if(name !== "newEmail" && name !== "number")
             this.setState({
                 [name] : value.replace(/[^a-z0-9]/gi, '')
             })
