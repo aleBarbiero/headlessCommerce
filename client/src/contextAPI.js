@@ -450,8 +450,8 @@ export default class ProductProvider extends Component {
     //logout
     logout = () => {
         fetch(`${hostName}/logoutAPI`)
-        .then(this.setState({logged: false, user: null}))
-        .catch(error => this.setState({logged: false, user: null}))
+        .then(this.setState({logged: false, user: null,wishlist: []}))
+        .catch(error => this.setState({logged: false, user: null,wishlist: []}))
     }//logout
 
     //signin
