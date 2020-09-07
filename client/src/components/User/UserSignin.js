@@ -43,10 +43,15 @@ export default class UserSignin extends Component {
         const target = event.target;
         const value = target.value;
         const name = target.name;
-        this.setState({
-            [name] : value.replace(/[^a-z0-9]/gi, '')
-        })
-    }
+        if(name !== "newEmail")
+            this.setState({
+                [name] : value.replace(/[^a-z0-9]/gi, '')
+            })
+        else
+            this.setState({
+                [name] : value
+            })
+    }//handleChanges
 
     validate = () => {
         let {signin} = this.context;
