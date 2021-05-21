@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "cc7ee7db32ec531a9ec08395df6016ee",
+    "revision": "601e06f567b764e0a80efc3f4e2c88ed",
     "url": "/headlessCommerce/index.html"
   },
   {
-    "revision": "36148488a1ab717739b8",
+    "revision": "22ce8da8de42cf1507b8",
     "url": "/headlessCommerce/static/css/main.89c5d1b6.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/headlessCommerce/static/js/2.b714f414.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "36148488a1ab717739b8",
-    "url": "/headlessCommerce/static/js/main.b91c0608.chunk.js"
+    "revision": "22ce8da8de42cf1507b8",
+    "url": "/headlessCommerce/static/js/main.cda6a0f8.chunk.js"
   },
   {
     "revision": "58b84010a1868b9d08bc",

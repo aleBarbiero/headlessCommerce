@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/headlessCommerce/static/css/main.89c5d1b6.chunk.css",
-    "main.js": "/headlessCommerce/static/js/main.b91c0608.chunk.js",
-    "main.js.map": "/headlessCommerce/static/js/main.b91c0608.chunk.js.map",
+    "main.js": "/headlessCommerce/static/js/main.cda6a0f8.chunk.js",
+    "main.js.map": "/headlessCommerce/static/js/main.cda6a0f8.chunk.js.map",
     "runtime-main.js": "/headlessCommerce/static/js/runtime-main.c6af657d.js",
     "runtime-main.js.map": "/headlessCommerce/static/js/runtime-main.c6af657d.js.map",
     "static/js/2.b714f414.chunk.js": "/headlessCommerce/static/js/2.b714f414.chunk.js",
     "static/js/2.b714f414.chunk.js.map": "/headlessCommerce/static/js/2.b714f414.chunk.js.map",
     "index.html": "/headlessCommerce/index.html",
-    "precache-manifest.9287b4a94837fc68c77fc1adeb3c3a58.js": "/headlessCommerce/precache-manifest.9287b4a94837fc68c77fc1adeb3c3a58.js",
+    "precache-manifest.d3a3c46bd0134dd56790e83e8804ca58.js": "/headlessCommerce/precache-manifest.d3a3c46bd0134dd56790e83e8804ca58.js",
     "service-worker.js": "/headlessCommerce/service-worker.js",
     "static/css/main.89c5d1b6.chunk.css.map": "/headlessCommerce/static/css/main.89c5d1b6.chunk.css.map",
     "static/js/2.b714f414.chunk.js.LICENSE.txt": "/headlessCommerce/static/js/2.b714f414.chunk.js.LICENSE.txt",
@@ -19,6 +19,6 @@
     "static/js/runtime-main.c6af657d.js",
     "static/js/2.b714f414.chunk.js",
     "static/css/main.89c5d1b6.chunk.css",
-    "static/js/main.b91c0608.chunk.js"
+    "static/js/main.cda6a0f8.chunk.js"
   ]
 }
